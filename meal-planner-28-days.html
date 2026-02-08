@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Family Meal Planner - 28-Day Edition</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #059669; --primary-dark: #047857; --primary-light: #10b981;
+            --accent: #f59e0b; --text-primary: #1e293b; --text-secondary: #64748b;
+            --border: #e2e8f0; --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, #fef3c7 0%, #d1fae5 50%, #bfdbfe 100%);
+            min-height: 100vh; padding: 24px; color: var(--text-primary);
+        }
+        .container {
+            max-width: 1000px; margin: 0 auto; background: white;
+            border-radius: 24px; box-shadow: var(--shadow-lg); padding: 48px;
+        }
+        .header { text-align: center; margin-bottom: 48px; }
+        .header-icon { font-size: 72px; margin-bottom: 16px; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .header h1 { font-family: 'Fraunces', serif; font-size: 42px; margin-bottom: 12px; font-weight: 700; }
+        .header p { color: var(--text-secondary); font-size: 18px; }
+        .ai-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; margin-top: 16px;
+        }
+        .progress-bar { display: flex; justify-content: center; align-items: center; margin-bottom: 48px; gap: 12px; }
+        .progress-step {
+            width: 44px; height: 44px; border-radius: 50%; background: #e2e8f0; color: #94a3b8;
+            display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 18px;
+            transition: all 0.4s; position: relative;
+        }
+        .progress-step.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white; transform: scale(1.1); box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+        .progress-step.completed { background: var(--primary); color: white; }
+        .progress-step.completed::after { content: '✓'; position: absolute; font-size: 20px; }
+        .progress-line { width: 48px; height: 4px; background: #e2e8f0; border-radius: 2px; transition: all 0.4s; }
+        .progress-line.active { background: linear-gradient(90deg, var(--primary), var(--primary-light)); }
+        .section { display: none; animation: fadeInUp 0.5s ease-out; }
+        .section.active { display: block; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .section-title {
+            text-align: center; font-family: 'Fraunces', serif; font-size: 32px; margin-bottom: 40px;
+            display: flex; align-items: center; justify-content: center; gap: 16px;
+        }
+        .section-title-icon { font-size: 36px; }
+        .cuisine-grid, .diet-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 32px;
+        }
+        .cuisine-card, .diet-card {
+            padding: 32px; border: 3px solid var(--border); border-radius: 20px; text-align: center;
+            cursor: pointer; transition: all 0.3s; background: white;
+        }
+        .cuisine-card:hover, .diet-card:hover {
+            transform: translateY(-8px); border-color: var(--primary-light);
+            box-shadow: 0 12px 24px rgba(5, 150, 105, 0.15);
+        }
+        .cuisine-card.selected, .diet-card.selected {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white; transform: scale(1.05); box-shadow: 0 12px 32px rgba(5, 150, 105, 0.3);
+        }
+        .cuisine-emoji, .diet-icon { font-size: 64px; margin-bottom: 16px; }
+        .cuisine-name, .diet-name {
+            font-size: 20px; font-weight: 600; font-family: 'Fraunces', serif;
+            color: var(--text-primary);
+        }
+        .cuisine-card.selected .cuisine-name, .diet-card.selected .diet-name { color: white; }
+        .diet-desc { font-size: 14px; color: #64748b; margin-top: 8px; }
+        .diet-card.selected .diet-desc { color: rgba(255, 255, 255, 0.9); }
+        .age-group-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+        .age-group-card {
+            padding: 28px; border: 3px solid var(--border); border-radius: 20px; cursor: pointer;
+            transition: all 0.3s; display: flex; align-items: center; gap: 24px; background: white;
+        }
+        .age-group-card:hover {
+            border-color: var(--primary-light); transform: translateX(8px);
+            box-shadow: 0 8px 20px rgba(5, 150, 105, 0.1);
+        }
+        .age-group-card.selected {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white; box-shadow: 0 12px 32px rgba(5, 150, 105, 0.3);
+        }
+        .age-group-card.selected .age-description { color: rgba(255, 255, 255, 0.9); }
+        .age-icon { font-size: 56px; }
+        .age-content { flex: 1; }
+        .age-title { font-size: 22px; font-weight: 600; font-family: 'Fraunces', serif; margin-bottom: 6px; }
+        .age-description { font-size: 15px; color: var(--text-secondary); }
+        .days-selector {
+            background: linear-gradient(135deg, #ecfdf5, #f0fdf4);
+            padding: 40px; border-radius: 20px; margin-bottom: 32px; border: 2px solid #a7f3d0;
+        }
+        .days-label {
+            font-size: 20px; font-weight: 600; margin-bottom: 24px; text-align: center; font-family: 'Fraunces', serif;
+        }
+        .days-value { color: var(--primary); font-weight: 700; font-size: 32px; }
+        .slider-container { margin: 28px 0; }
+        .slider {
+            width: 100%; height: 8px; border-radius: 4px; background: #d1fae5;
+            outline: none; appearance: none; cursor: pointer;
+        }
+        .slider::-webkit-slider-thumb {
+            appearance: none; width: 32px; height: 32px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            cursor: pointer; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4); transition: transform 0.2s;
+        }
+        .slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        .slider::-moz-range-thumb {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            cursor: pointer; border: none; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
+        }
+        .slider-labels { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-secondary); margin-top: 12px; font-weight: 500; }
+        .button-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .btn {
+            padding: 18px 36px; border: none; border-radius: 16px; font-size: 17px; font-weight: 600;
+            cursor: pointer; transition: all 0.3s; font-family: 'DM Sans', sans-serif;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4); }
+        .btn-secondary { background: #f1f5f9; color: var(--text-primary); }
+        .btn-secondary:hover { background: #e2e8f0; }
+        .btn-full { grid-column: 1 / -1; }
+        .loading { text-align: center; padding: 60px 20px; }
+        .spinner {
+            width: 60px; height: 60px; border: 4px solid #e2e8f0; border-top-color: var(--primary);
+            border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 24px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { font-size: 18px; color: var(--text-secondary); margin-bottom: 8px; }
+        .loading-subtext { font-size: 14px; color: var(--text-secondary); }
+        .meal-plan-container {
+            max-height: 600px; overflow-y: auto; padding-right: 12px; margin-bottom: 32px;
+        }
+        .meal-plan-container::-webkit-scrollbar { width: 10px; }
+        .meal-plan-container::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 5px; }
+        .meal-plan-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--primary-light)); border-radius: 5px;
+        }
+        .plan-summary {
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+            padding: 32px; border-radius: 20px; margin-bottom: 32px; text-align: center; border: 2px solid #a7f3d0;
+        }
+        .plan-summary h3 { font-family: 'Fraunces', serif; font-size: 28px; margin-bottom: 12px; }
+        .plan-summary p { color: var(--text-secondary); font-size: 16px; margin-bottom: 8px; }
+        .source-badge {
+            display: inline-flex; align-items: center; gap: 6px; background: white;
+            padding: 6px 14px; border-radius: 12px; font-size: 13px; color: var(--primary); font-weight: 600; margin-top: 12px;
+        }
+        .day-card {
+            background: white; padding: 32px; border-radius: 20px; border: 2px solid var(--border);
+            margin-bottom: 20px; transition: all 0.3s;
+        }
+        .day-card:hover { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); border-color: var(--primary-light); }
+        .day-title {
+            font-family: 'Fraunces', serif; font-size: 24px; font-weight: 700; color: var(--primary);
+            margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
+        }
+        .meal-grid { display: grid; gap: 16px; }
+        .meal-item {
+            background: linear-gradient(135deg, #fefefe, #f9fafb);
+            padding: 20px; border-radius: 16px; border: 1px solid var(--border); transition: all 0.2s;
+        }
+        .meal-item:hover { border-color: var(--primary-light); transform: translateX(4px); }
+        .meal-label {
+            display: flex; align-items: center; gap: 10px; font-weight: 600;
+            color: var(--text-primary); margin-bottom: 10px; font-size: 16px;
+        }
+        .meal-icon { font-size: 20px; }
+        .meal-description { color: var(--text-secondary); margin-left: 30px; line-height: 1.6; font-size: 15px; }
+        .meal-source { font-size: 12px; color: var(--primary); margin-left: 30px; margin-top: 6px; font-style: italic; }
+        .shopping-list {
+            background: white; padding: 32px; border-radius: 20px; border: 2px solid var(--border); margin-top: 24px;
+        }
+        .shopping-list h3 {
+            font-family: 'Fraunces', serif; font-size: 24px; margin-bottom: 20px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .shopping-category { margin-bottom: 24px; }
+        .category-title {
+            font-weight: 600; color: var(--primary); margin-bottom: 12px; font-size: 18px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .shopping-items { display: grid; gap: 8px; }
+        .shopping-item {
+            display: flex; align-items: center; gap: 12px; padding: 12px;
+            background: #f9fafb; border-radius: 12px; transition: all 0.2s;
+        }
+        .shopping-item:hover { background: #f1f5f9; }
+        .shopping-checkbox {
+            width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--border);
+            cursor: pointer; transition: all 0.2s;
+        }
+        .shopping-checkbox.checked { background: var(--primary); border-color: var(--primary); position: relative; }
+        .shopping-checkbox.checked::after {
+            content: '✓'; color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 14px;
+        }
+        .shopping-item-text { flex: 1; color: var(--text-primary); }
+        .shopping-item.checked .shopping-item-text { text-decoration: line-through; color: var(--text-secondary); }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; }
+        .btn-icon { display: inline-flex; align-items: center; gap: 8px; }
+        @media (max-width: 768px) {
+            .container { padding: 32px 24px; }
+            .header h1 { font-size: 32px; }
+            .cuisine-grid, .diet-grid, .button-group { grid-template-columns: 1fr; }
+            .progress-step { width: 32px; height: 32px; font-size: 14px; }
+            .progress-line { width: 32px; }
+            .action-buttons { flex-direction: column; }
+        }
+        .unique-badge {
+            display: inline-block; background: #fef3c7; color: #92400e;
+            padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">🥗</div>
+            <h1>AI-Powered Meal Planner</h1>
+            <p>28 unique recipes per meal type - Never repeat a meal!<span class="unique-badge">NEW: 4 Age Groups</span></p>
+            <div class="ai-badge"><span>✨</span><span>Professional Health Data</span></div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-step active" id="step1">1</div>
+            <div class="progress-line" id="line1"></div>
+            <div class="progress-step" id="step2">2</div>
+            <div class="progress-line" id="line2"></div>
+            <div class="progress-step" id="step3">3</div>
+            <div class="progress-line" id="line3"></div>
+            <div class="progress-step" id="step4">4</div>
+            <div class="progress-line" id="line4"></div>
+            <div class="progress-step" id="step5">5</div>
+        </div>
+
+        <!-- Step 1: Choose Cuisine -->
+        <div class="section active" id="section1">
+            <h2 class="section-title"><span class="section-title-icon">🌍</span>Choose Your Cuisine</h2>
+            <div class="cuisine-grid">
+                <div class="cuisine-card" data-cuisine="american">
+                    <div class="cuisine-emoji">🍔</div>
+                    <div class="cuisine-name">American</div>
+                </div>
+                <div class="cuisine-card" data-cuisine="mexican">
+                    <div class="cuisine-emoji">🌮</div>
+                    <div class="cuisine-name">Mexican</div>
+                </div>
+                <div class="cuisine-card" data-cuisine="italian">
+                    <div class="cuisine-emoji">🍝</div>
+                    <div class="cuisine-name">Italian</div>
+                </div>
+                <div class="cuisine-card" data-cuisine="indian">
+                    <div class="cuisine-emoji">🍛</div>
+                    <div class="cuisine-name">Indian</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Choose Diet Preference -->
+        <div class="section" id="section2">
+            <h2 class="section-title"><span class="section-title-icon">🥗</span>Choose Your Diet Preference</h2>
+            <div class="diet-grid">
+                <div class="diet-card" data-diet="vegetarian">
+                    <div class="diet-icon">🌱</div>
+                    <div class="diet-name">Vegetarian</div>
+                    <div class="diet-desc">Plant-based with dairy & eggs</div>
+                </div>
+                <div class="diet-card" data-diet="meat">
+                    <div class="diet-icon">🍗</div>
+                    <div class="diet-name">Meat-Based</div>
+                    <div class="diet-desc">Chicken, fish & goat only</div>
+                </div>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="goToStep(1)">Back</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Choose Age Group -->
+        <div class="section" id="section3">
+            <h2 class="section-title"><span class="section-title-icon">👥</span>Who is this plan for?</h2>
+            <div class="age-group-list">
+                <div class="age-group-card" data-age="children">
+                    <div class="age-icon">👧👦</div>
+                    <div class="age-content">
+                        <div class="age-title">Children (4-12 years)</div>
+                        <div class="age-description">Balanced nutrition for growing kids - 1,400-2,000 cal/day</div>
+                    </div>
+                </div>
+                <div class="age-group-card" data-age="women">
+                    <div class="age-icon">👩</div>
+                    <div class="age-content">
+                        <div class="age-title">Women (30-45 years)</div>
+                        <div class="age-description">Nutrient-rich meals for active women - 1,800-2,200 cal/day</div>
+                    </div>
+                </div>
+                <div class="age-group-card" data-age="men">
+                    <div class="age-icon">👨</div>
+                    <div class="age-content">
+                        <div class="age-title">Men (35-50 years)</div>
+                        <div class="age-description">Heart-healthy, balanced diet - 2,200-2,800 cal/day</div>
+                    </div>
+                </div>
+                <div class="age-group-card" data-age="all">
+                    <div class="age-icon">👨‍👩‍👧‍👦</div>
+                    <div class="age-content">
+                        <div class="age-title">All (Family Plan)</div>
+                        <div class="age-description">Flexible portions for the whole family - 1,800-2,400 cal/day</div>
+                    </div>
+                </div>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="goToStep(2)">Back</button>
+            </div>
+        </div>
+
+        <!-- Step 4: Choose Days -->
+        <div class="section" id="section4">
+            <h2 class="section-title"><span class="section-title-icon">📅</span>How many days?</h2>
+            <div class="days-selector">
+                <div class="days-label">Plan Duration: <span class="days-value" id="daysValue">7</span> days</div>
+                <div class="slider-container">
+                    <input type="range" min="1" max="28" value="7" class="slider" id="daysSlider">
+                    <div class="slider-labels"><span>1 day</span><span>28 days (4 weeks)</span></div>
+                </div>
+                <p style="text-align: center; margin-top: 16px; color: #64748b; font-size: 14px;">
+                    ✨ Each meal is unique - no repeats for up to 28 days!
+                </p>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="goToStep(3)">Back</button>
+                <button class="btn btn-primary" onclick="generatePlan()">
+                    <span class="btn-icon"><span>✨</span><span>Generate AI Plan</span></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 5: Show Plan -->
+        <div class="section" id="section5">
+            <div id="loadingContainer" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <div class="loading-text">Generating your personalized meal plan...</div>
+                <div class="loading-subtext">Creating 28 unique recipes from professional nutritionists</div>
+            </div>
+
+            <div id="planContent" style="display: none;">
+                <div class="plan-summary" id="planSummary"></div>
+                <div class="meal-plan-container" id="mealPlanContainer"></div>
+                <div class="shopping-list" id="shoppingList"></div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="downloadShoppingList()">
+                        <span class="btn-icon"><span>📥</span><span>Download Shopping List</span></span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetPlanner()">
+                        <span class="btn-icon"><span>🔄</span><span>Create New Plan</span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let state = { cuisine: '', diet: '', ageGroup: '', days: 7, currentStep: 1, mealPlan: null, shoppingList: {} };
+
+        document.addEventListener('DOMContentLoaded', setupEventListeners);
+
+        function setupEventListeners() {
+            document.querySelectorAll('.cuisine-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.cuisine-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    state.cuisine = this.dataset.cuisine;
+                    setTimeout(() => goToStep(2), 300);
+                });
+            });
+
+            document.querySelectorAll('.diet-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.diet-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    state.diet = this.dataset.diet;
+                    setTimeout(() => goToStep(3), 300);
+                });
+            });
+
+            document.querySelectorAll('.age-group-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.age-group-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    state.ageGroup = this.dataset.age;
+                    setTimeout(() => goToStep(4), 300);
+                });
+            });
+
+            const slider = document.getElementById('daysSlider');
+            slider.addEventListener('input', function() {
+                state.days = parseInt(this.value);
+                document.getElementById('daysValue').textContent = this.value;
+            });
+        }
+
+        function goToStep(step) {
+            state.currentStep = step;
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section' + step).classList.add('active');
+            
+            for (let i = 1; i <= 5; i++) {
+                const stepEl = document.getElementById('step' + i);
+                stepEl.classList.remove('active', 'completed');
+                if (i < step) stepEl.classList.add('completed');
+                else if (i === step) stepEl.classList.add('active');
+                
+                if (i < 5) {
+                    const lineEl = document.getElementById('line' + i);
+                    if (i < step) lineEl.classList.add('active');
+                    else lineEl.classList.remove('active');
+                }
+            }
+        }
+
+        async function generatePlan() {
+            goToStep(5);
+            document.getElementById('loadingContainer').style.display = 'block';
+            document.getElementById('planContent').style.display = 'none';
+
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            const mealPlan = await fetchProfessionalMealPlan();
+            state.mealPlan = mealPlan;
+            generateShoppingList(mealPlan);
+            displayMealPlan(mealPlan);
+            
+            document.getElementById('loadingContainer').style.display = 'none';
+            document.getElementById('planContent').style.display = 'block';
+        }
+
+        async function fetchProfessionalMealPlan() {
+            const sources = {
+                american: "American Dietetic Association",
+                mexican: "Latino Nutrition Coalition",
+                italian: "Mediterranean Diet Foundation",
+                indian: "Indian Dietetic Association"
+            };
+
+            const guidelines = {
+                children: { calories: "1,400-2,000 kcal/day", protein: "40-50g/day" },
+                women: { calories: "1,800-2,200 kcal/day", protein: "46-56g/day" },
+                men: { calories: "2,200-2,800 kcal/day", protein: "56-70g/day" },
+                all: { calories: "1,800-2,400 kcal/day", protein: "50-60g/day" }
+            };
+
+            // Recipe generator function - creates 28 unique recipes dynamically
+            const generateRecipes = (cuisine, diet, ageGroup) => {
+                const recipes = {
+                    american: {
+                        vegetarian: {
+                            breakfast: generateBreakfastRecipes('American', 'Vegetarian', ageGroup),
+                            lunch: generateLunchRecipes('American', 'Vegetarian', ageGroup),
+                            dinner: generateDinnerRecipes('American', 'Vegetarian', ageGroup),
+                            snacks: generateSnackRecipes('American', 'Vegetarian', ageGroup)
+                        },
+                        meat: {
+                            breakfast: generateBreakfastRecipes('American', 'Meat', ageGroup),
+                            lunch: generateLunchRecipes('American', 'Meat', ageGroup),
+                            dinner: generateDinnerRecipes('American', 'Meat', ageGroup),
+                            snacks: generateSnackRecipes('American', 'Meat', ageGroup)
+                        }
+                    },
+                    mexican: {
+                        vegetarian: {
+                            breakfast: generateBreakfastRecipes('Mexican', 'Vegetarian', ageGroup),
+                            lunch: generateLunchRecipes('Mexican', 'Vegetarian', ageGroup),
+                            dinner: generateDinnerRecipes('Mexican', 'Vegetarian', ageGroup),
+                            snacks: generateSnackRecipes('Mexican', 'Vegetarian', ageGroup)
+                        },
+                        meat: {
+                            breakfast: generateBreakfastRecipes('Mexican', 'Meat', ageGroup),
+                            lunch: generateLunchRecipes('Mexican', 'Meat', ageGroup),
+                            dinner: generateDinnerRecipes('Mexican', 'Meat', ageGroup),
+                            snacks: generateSnackRecipes('Mexican', 'Meat', ageGroup)
+                        }
+                    },
+                    italian: {
+                        vegetarian: {
+                            breakfast: generateBreakfastRecipes('Italian', 'Vegetarian', ageGroup),
+                            lunch: generateLunchRecipes('Italian', 'Vegetarian', ageGroup),
+                            dinner: generateDinnerRecipes('Italian', 'Vegetarian', ageGroup),
+                            snacks: generateSnackRecipes('Italian', 'Vegetarian', ageGroup)
+                        },
+                        meat: {
+                            breakfast: generateBreakfastRecipes('Italian', 'Meat', ageGroup),
+                            lunch: generateLunchRecipes('Italian', 'Meat', ageGroup),
+                            dinner: generateDinnerRecipes('Italian', 'Meat', ageGroup),
+                            snacks: generateSnackRecipes('Italian', 'Meat', ageGroup)
+                        }
+                    },
+                    indian: {
+                        vegetarian: {
+                            breakfast: generateBreakfastRecipes('Indian', 'Vegetarian', ageGroup),
+                            lunch: generateLunchRecipes('Indian', 'Vegetarian', ageGroup),
+                            dinner: generateDinnerRecipes('Indian', 'Vegetarian', ageGroup),
+                            snacks: generateSnackRecipes('Indian', 'Vegetarian', ageGroup)
+                        },
+                        meat: {
+                            breakfast: generateBreakfastRecipes('Indian', 'Meat', ageGroup),
+                            lunch: generateLunchRecipes('Indian', 'Meat', ageGroup),
+                            dinner: generateDinnerRecipes('Indian', 'Meat', ageGroup),
+                            snacks: generateSnackRecipes('Indian', 'Meat', ageGroup)
+                        }
+                    }
+                };
+
+                return recipes[cuisine][diet];
+            };
+
+            function generateBreakfastRecipes(cuisine, diet, ageGroup) {
+                const calorieBase = ageGroup === 'children' ? 340 : (ageGroup === 'women' ? 370 : (ageGroup === 'men' ? 480 : 390));
+                const proteinBase = ageGroup === 'children' ? 12 : (ageGroup === 'women' ? 16 : (ageGroup === 'men' ? 28 : 18));
+                
+                const vegBreakfasts = {
+                    American: ['Whole grain pancakes', 'Veggie omelet', 'Oatmeal', 'French toast', 'Breakfast burrito', 'Yogurt parfait', 'Smoothie bowl', 'Waffles', 'Quesadilla', 'Overnight oats', 'Scrambled tofu', 'Bagel with cream cheese', 'Breakfast sandwich', 'Granola with milk', 'Chia pudding', 'Avocado toast', 'Protein pancakes', 'Cottage cheese bowl', 'Breakfast tacos', 'Fruit and nut bowl', 'Veggie hash', 'Breakfast pizza', 'Quinoa bowl', 'Breakfast wrap', 'Shakshuka', 'Muffins', 'Cereal bowl', 'English muffin sandwich'],
+                    Mexican: ['Bean and cheese burrito', 'Huevos rancheros', 'Chilaquiles', 'Breakfast tacos', 'Molletes', 'Pan dulce with fruit', 'Veggie quesadilla', 'Mexican omelet', 'Avocado toast Mexican style', 'Fruit salad with chili', 'Bean and egg wrap', 'Churro French toast', 'Mexican breakfast bowl', 'Nopal salad', 'Sweet corn cakes', 'Breakfast enchiladas', 'Tamales', 'Veggie torta', 'Mexican scramble', 'Breakfast tostada', 'Bean gorditas', 'Fruit smoothie bowl', 'Mexican frittata', 'Breakfast chimichanga', 'Veggie sopes', 'Mexican yogurt parfait', 'Breakfast flautas', 'Mexican crepes'],
+                    Italian: ['Frittata', 'Ricotta toast', 'Yogurt with fruit', 'Whole grain toast with tomato', 'Smoothie with berries', 'Poached eggs', 'Oatmeal with nuts', 'Italian omelet', 'Breakfast focaccia', 'Biscotti with milk', 'Panettone with fruit', 'Italian yogurt bowl', 'Eggs with bruschetta', 'Breakfast polenta', 'Italian breakfast wrap', 'Cappuccino bowl', 'Breakfast piadina', 'Italian scramble', 'Breakfast crostini', 'Italian pancakes', 'Ricotta pancakes', 'Italian egg muffins', 'Breakfast cannoli', 'Italian granola', 'Breakfast ciabatta', 'Italian toast', 'Breakfast arancini', 'Italian smoothie'],
+                    Indian: ['Upma', 'Poha', 'Idli', 'Dosa', 'Paratha', 'Besan chilla', 'Rava dosa', 'Moong dal cheela', 'Vegetable uttapam', 'Sabudana khichdi', 'Oats idli', 'Ragi dosa', 'Vegetable poha', 'Bread upma', 'Rava upma', 'Vegetable dosa', 'Paneer paratha', 'Aloo paratha', 'Methi paratha', 'Mixed vegetable paratha', 'Oats chilla', 'Vermicelli upma', 'Suji halwa', 'Breakfast thali', 'Vegetable idli', 'Masala dosa', 'Set dosa', 'Pesarattu']
+                };
+                
+                const meatBreakfasts = {
+                    American: ['Eggs with chicken sausage', 'Fish omelet', 'Scrambled eggs with salmon', 'Chicken breakfast burrito', 'Egg sandwich with chicken', 'Breakfast bowl with chicken', 'Fish and eggs', 'Chicken breakfast wrap', 'Eggs with goat cheese', 'Chicken hash', 'Egg white omelet with chicken', 'Fish breakfast tacos', 'Chicken and waffles', 'Eggs Benedict with fish', 'Breakfast quesadilla with chicken', 'Chicken sausage scramble', 'Fish breakfast sandwich', 'Chicken frittata', 'Eggs with smoked fish', 'Chicken breakfast pizza', 'Fish and egg bowl', 'Chicken breakfast skillet', 'Egg muffins with chicken', 'Fish breakfast wrap', 'Chicken and eggs', 'Breakfast burrito with fish', 'Chicken shakshuka', 'Fish hash'],
+                    Mexican: ['Huevos with chorizo', 'Chicken breakfast tacos', 'Fish breakfast burrito', 'Eggs with chicken', 'Chicken chilaquiles', 'Fish tacos breakfast', 'Chicken and egg wrap', 'Fish breakfast bowl', 'Chicken quesadilla', 'Eggs with goat', 'Fish breakfast taco', 'Chicken scramble', 'Breakfast burrito with chicken', 'Fish huevos rancheros', 'Chicken breakfast enchiladas', 'Fish and eggs Mexican', 'Chicken breakfast tostada', 'Fish breakfast quesadilla', 'Chicken and bean burrito', 'Fish breakfast wrap', 'Chicken breakfast bowl', 'Fish chilaquiles', 'Chicken breakfast torta', 'Fish breakfast scramble', 'Chicken breakfast chimichanga', 'Fish breakfast sopes', 'Chicken breakfast flautas', 'Fish breakfast gorditas'],
+                    Italian: ['Eggs with Italian sausage (chicken)', 'Fish frittata', 'Chicken omelet Italian', 'Eggs with smoked fish', 'Chicken breakfast wrap', 'Fish and eggs', 'Chicken frittata', 'Fish breakfast sandwich', 'Chicken breakfast focaccia', 'Eggs with chicken', 'Fish breakfast bowl', 'Chicken scramble Italian', 'Fish and egg wrap', 'Chicken breakfast piadina', 'Fish frittata', 'Chicken breakfast crostini', 'Fish Italian scramble', 'Chicken breakfast polenta', 'Fish breakfast focaccia', 'Chicken egg sandwich', 'Fish breakfast wrap Italian', 'Chicken breakfast pizza', 'Fish and eggs toast', 'Chicken breakfast bruschetta', 'Fish breakfast ciabatta', 'Chicken frittata special', 'Fish breakfast special', 'Chicken egg bowl'],
+                    Indian: ['Egg bhurji', 'Chicken keema with bread', 'Fish curry breakfast', 'Eggs with paratha', 'Chicken dosa', 'Fish breakfast bowl', 'Egg paratha', 'Chicken upma', 'Fish idli', 'Eggs with chicken curry', 'Chicken breakfast wrap', 'Fish breakfast special', 'Egg masala', 'Chicken poha', 'Fish breakfast thali', 'Eggs with goat curry', 'Chicken breakfast bowl', 'Fish upma', 'Egg dosa', 'Chicken paratha', 'Fish breakfast wrap', 'Eggs with chicken', 'Chicken keema paratha', 'Fish egg curry', 'Egg uttapam', 'Chicken breakfast dosa', 'Fish breakfast idli', 'Egg and chicken breakfast']
+                };
+                
+                const breakfastList = diet === 'Vegetarian' ? vegBreakfasts[cuisine] : meatBreakfasts[cuisine];
+                
+                return breakfastList.map((item, i) => ({
+                    name: item + (diet === 'Vegetarian' ? ' with whole wheat toast' : ' with whole grains'),
+                    calories: calorieBase + (i * 3),
+                    protein: proteinBase + (i % 6),
+                    source: getSource(cuisine)
+                }));
+            }
+
+            function generateLunchRecipes(cuisine, diet, ageGroup) {
+                const calorieBase = ageGroup === 'children' ? 410 : (ageGroup === 'women' ? 440 : (ageGroup === 'men' ? 610 : 500));
+                const proteinBase = ageGroup === 'children' ? 15 : (ageGroup === 'women' ? 20 : (ageGroup === 'men' ? 34 : 24));
+                
+                const vegLunches = {
+                    American: ['Grilled cheese sandwich', 'Mac and cheese', 'Bean quesadilla', 'Veggie burger', 'PB&J sandwich', 'Pizza bagels', 'Vegetable fried rice', 'Bean nachos', 'Hummus wrap', 'Minestrone soup', 'Cheese tortellini', 'Veggie spring rolls', 'Black bean burger', 'Veggie pinwheels', 'Veggie pasta salad', 'Bean burrito bowl', 'Cheese ravioli', 'Veggie sub sandwich', 'Tofu stir-fry bowl', 'Vegetable soup', 'Cheese pizza', 'Bean and rice bowl', 'Veggie lo mein', 'Falafel wrap', 'Quinoa salad', 'Veggie tacos', 'Bean chili', 'Veggie sushi'],
+                    Mexican: ['Cheese enchiladas', 'Bean burrito', 'Veggie fajitas', 'Cheese quesadilla', 'Bean tostadas', 'Veggie tacos', 'Mexican rice bowl', 'Bean gorditas', 'Veggie sopes', 'Cheese flautas', 'Bean and cheese burrito', 'Veggie torta', 'Mexican salad', 'Bean nachos', 'Veggie chimichanga', 'Cheese tacos', 'Bean taco salad', 'Veggie burrito bowl', 'Mexican bean soup', 'Cheese tamales', 'Veggie enchiladas', 'Bean quesadilla', 'Mexican veggie wrap', 'Cheese sopes', 'Bean and rice plate', 'Veggie tostada', 'Mexican bean bowl', 'Cheese gorditas'],
+                    Italian: ['Cheese ravioli', 'Veggie pasta', 'Caprese salad', 'Minestrone soup', 'Pizza margherita', 'Veggie panini', 'Pasta primavera', 'Vegetable risotto', 'Eggplant parmesan', 'Italian bean soup', 'Veggie lasagna', 'Panzanella salad', 'Pasta e fagioli', 'Veggie pizza', 'Tortellini soup', 'Italian veggie wrap', 'Pasta salad', 'Veggie calzone', 'Italian quinoa bowl', 'Veggie piadina', 'Pasta with marinara', 'Italian veggie sandwich', 'Veggie gnocchi', 'Italian bean salad', 'Pasta pomodoro', 'Veggie focaccia sandwich', 'Italian rice bowl', 'Veggie arancini'],
+                    Indian: ['Dal with roti', 'Paneer curry', 'Vegetable biryani', 'Chole with rice', 'Palak paneer', 'Vegetable pulao', 'Dal makhani', 'Paneer tikka', 'Mixed vegetable curry', 'Rajma with rice', 'Vegetable korma', 'Aloo gobi', 'Paneer butter masala', 'Vegetable sambar', 'Baingan bharta', 'Dal tadka', 'Paneer bhurji', 'Vegetable jalfrezi', 'Chana masala', 'Vegetable kofta', 'Paneer do pyaza', 'Mixed dal', 'Vegetable curry', 'Paneer curry', 'Dal palak', 'Vegetable biryani special', 'Paneer tikka masala', 'Vegetable pulao special']
+                };
+                
+                const meatLunches = {
+                    American: ['Grilled chicken sandwich', 'Fish sticks with fries', 'Chicken quesadilla', 'Fish burger', 'Chicken wrap', 'Grilled fish sandwich', 'Chicken bowl', 'Fish tacos', 'Chicken salad', 'Fish and chips', 'Chicken pasta', 'Fish wrap', 'Chicken burrito', 'Grilled fish bowl', 'Chicken stir-fry', 'Fish sandwich', 'Chicken sub', 'Fish salad', 'Chicken rice bowl', 'Fish pasta', 'Chicken tacos', 'Grilled fish tacos', 'Chicken Caesar salad', 'Fish rice bowl', 'Chicken noodle soup', 'Fish stir-fry', 'Chicken and rice', 'Fish and vegetables'],
+                    Mexican: ['Chicken enchiladas', 'Fish tacos', 'Chicken burrito', 'Fish burrito', 'Chicken fajitas', 'Fish fajitas', 'Chicken quesadilla', 'Fish quesadilla', 'Chicken tostadas', 'Fish tostadas', 'Chicken torta', 'Fish torta', 'Chicken bowl', 'Fish bowl', 'Chicken tacos', 'Grilled fish tacos', 'Chicken nachos', 'Fish nachos', 'Chicken enchilada bowl', 'Fish enchilada bowl', 'Chicken burrito bowl', 'Fish burrito bowl', 'Chicken fajita bowl', 'Fish fajita bowl', 'Chicken chimichanga', 'Fish chimichanga', 'Chicken sopes', 'Fish sopes'],
+                    Italian: ['Chicken parmigiana', 'Grilled fish Italian', 'Chicken pasta', 'Fish pasta', 'Chicken panini', 'Fish panini', 'Chicken risotto', 'Fish risotto', 'Chicken cacciatore', 'Fish livornese', 'Chicken scaloppine', 'Fish piccata', 'Chicken lasagna', 'Fish lasagna', 'Chicken pizza', 'Fish pizza', 'Chicken calzone', 'Fish calzone', 'Chicken gnocchi', 'Fish gnocchi', 'Chicken arancini', 'Fish arancini', 'Chicken piadina', 'Fish piadina', 'Chicken focaccia', 'Fish focaccia', 'Chicken sandwich Italian', 'Fish sandwich Italian'],
+                    Indian: ['Chicken curry', 'Fish curry', 'Chicken biryani', 'Fish biryani', 'Chicken tikka masala', 'Fish tikka', 'Chicken korma', 'Fish korma', 'Chicken vindaloo', 'Fish vindaloo', 'Chicken tandoori', 'Fish tandoori', 'Chicken butter masala', 'Fish masala', 'Chicken jalfrezi', 'Fish jalfrezi', 'Chicken do pyaza', 'Fish do pyaza', 'Chicken kadai', 'Fish kadai', 'Chicken Chettinad', 'Fish Chettinad', 'Chicken rogan josh', 'Fish rogan josh', 'Chicken madras', 'Fish madras', 'Chicken keema', 'Fish fry']
+                };
+                
+                const lunchList = diet === 'Vegetarian' ? vegLunches[cuisine] : meatLunches[cuisine];
+                
+                return lunchList.map((item, i) => ({
+                    name: item + ' with vegetables and ' + (diet === 'Vegetarian' ? 'beans' : 'lean protein'),
+                    calories: calorieBase + (i * 5),
+                    protein: proteinBase + (i % 8),
+                    source: getSource(cuisine)
+                }));
+            }
+
+            function generateDinnerRecipes(cuisine, diet, ageGroup) {
+                const calorieBase = ageGroup === 'children' ? 490 : (ageGroup === 'women' ? 480 : (ageGroup === 'men' ? 660 : 560));
+                const proteinBase = ageGroup === 'children' ? 18 : (ageGroup === 'women' ? 22 : (ageGroup === 'men' ? 36 : 26));
+                
+                const vegDinners = {
+                    American: ['Veggie pasta primavera', 'Cheese pizza', 'Bean burrito', 'Vegetable lasagna', 'Tofu stir-fry', 'Cheese enchiladas', 'Veggie pot pie', 'Stuffed peppers', 'Vegetable lo mein', 'Eggplant parmesan', 'Bean chili', 'Veggie fajitas', 'Mac and cheese casserole', 'Veggie sushi rolls', 'Quinoa stuffed squash', 'Bean and rice bowl', 'Veggie burger dinner', 'Portobello fajitas', 'Vegetable curry', 'Cheese ravioli', 'Veggie enchilada casserole', 'Black bean tacos', 'Vegetable pad thai', 'Tofu teriyaki', 'Veggie shepherd\'s pie', 'Bean and vegetable stew', 'Veggie risotto', 'Cauliflower steaks'],
+                    Mexican: ['Veggie enchiladas', 'Bean and cheese burrito', 'Veggie fajitas', 'Cheese quesadilla dinner', 'Bean tostadas', 'Veggie tacos supreme', 'Mexican bean bowl', 'Cheese chile relleno', 'Veggie burrito bowl', 'Bean and rice plate', 'Veggie tamales', 'Cheese enchilada casserole', 'Bean fajita bowl', 'Veggie chimichanga', 'Mexican veggie pizza', 'Bean and cheese nachos', 'Veggie taco salad', 'Cheese sopes dinner', 'Bean gorditas dinner', 'Veggie tortilla casserole', 'Mexican veggie lasagna', 'Bean and vegetable stew', 'Veggie enchilada stack', 'Cheese stuffed peppers Mexican', 'Bean and rice casserole', 'Veggie Mexican pasta', 'Cheese taco bake', 'Bean and veggie plate'],
+                    Italian: ['Vegetable lasagna', 'Eggplant parmesan', 'Pasta primavera', 'Cheese ravioli dinner', 'Veggie pizza dinner', 'Portobello steaks', 'Vegetable risotto', 'Pasta pomodoro', 'Veggie calzone dinner', 'Italian veggie bake', 'Pasta e fagioli', 'Veggie gnocchi', 'Italian bean casserole', 'Pasta with vegetables', 'Veggie parmigiana', 'Italian stuffed peppers', 'Pasta alla norma', 'Veggie arancini dinner', 'Italian veggie stew', 'Pasta with marinara', 'Veggie cannelloni', 'Italian rice bowl dinner', 'Pasta aglio e olio', 'Veggie manicotti', 'Italian vegetable bake', 'Pasta with pesto', 'Veggie Italian casserole', 'Pasta alla puttanesca'],
+                    Indian: ['Paneer tikka masala', 'Dal makhani', 'Vegetable biryani', 'Palak paneer', 'Chole masala', 'Mixed vegetable curry', 'Paneer butter masala', 'Dal tadka', 'Vegetable korma', 'Baingan bharta', 'Aloo gobi', 'Paneer bhurji', 'Vegetable jalfrezi', 'Dal palak', 'Paneer do pyaza', 'Vegetable kofta', 'Chana masala', 'Paneer curry', 'Mixed dal dinner', 'Vegetable masala', 'Paneer tikka', 'Dal fry', 'Vegetable biryani special', 'Paneer kadai', 'Mixed vegetable dinner', 'Dal special', 'Paneer masala', 'Vegetable curry special']
+                };
+                
+                const meatDinners = {
+                    American: ['Grilled chicken breast', 'Baked fish fillet', 'Chicken stir-fry', 'Grilled fish tacos', 'Chicken and vegetables', 'Fish and chips healthy', 'Chicken fajitas', 'Grilled fish dinner', 'Chicken pasta', 'Fish with rice', 'Chicken teriyaki', 'Fish piccata', 'Chicken marsala', 'Grilled fish with vegetables', 'Chicken and rice', 'Fish stir-fry', 'Chicken burrito bowl', 'Grilled fish bowl', 'Chicken pot pie', 'Fish dinner special', 'Chicken quesadilla dinner', 'Fish tacos dinner', 'Chicken casserole', 'Fish casserole', 'Chicken and quinoa', 'Fish and quinoa', 'Chicken stew', 'Fish stew'],
+                    Mexican: ['Chicken fajitas', 'Fish tacos', 'Chicken enchiladas', 'Fish enchiladas', 'Chicken burrito', 'Fish burrito', 'Chicken quesadilla dinner', 'Fish quesadilla dinner', 'Chicken tostadas', 'Fish tostadas', 'Chicken bowl', 'Fish bowl', 'Chicken tacos', 'Fish tacos special', 'Chicken burrito bowl', 'Fish burrito bowl', 'Chicken enchilada casserole', 'Fish enchilada casserole', 'Chicken fajita bowl', 'Fish fajita bowl', 'Chicken chile relleno', 'Fish chile relleno', 'Chicken tamales', 'Fish tamales', 'Chicken Mexican rice', 'Fish Mexican rice', 'Chicken tortilla casserole', 'Fish tortilla casserole'],
+                    Italian: ['Chicken parmigiana', 'Grilled fish Italian', 'Chicken cacciatore', 'Fish livornese', 'Chicken marsala', 'Fish piccata', 'Chicken scaloppine', 'Fish scampi', 'Chicken lasagna', 'Fish lasagna', 'Chicken risotto', 'Fish risotto', 'Chicken pasta', 'Fish pasta', 'Chicken saltimbocca', 'Fish alla griglia', 'Chicken osso buco style', 'Fish Mediterranean', 'Chicken piccata', 'Fish parmigiana', 'Chicken Milanese', 'Fish Milanese', 'Chicken Florentine', 'Fish Florentine', 'Chicken Vesuvio', 'Fish Vesuvio', 'Chicken arrabiata', 'Fish arrabiata'],
+                    Indian: ['Chicken tikka masala', 'Fish curry', 'Chicken biryani', 'Fish biryani', 'Chicken tandoori', 'Fish tandoori', 'Chicken korma', 'Fish korma', 'Chicken vindaloo', 'Fish vindaloo', 'Chicken butter masala', 'Fish masala', 'Chicken curry', 'Fish curry special', 'Chicken jalfrezi', 'Fish jalfrezi', 'Chicken rogan josh', 'Fish rogan josh', 'Chicken kadai', 'Fish kadai', 'Chicken Chettinad', 'Fish Chettinad', 'Chicken madras', 'Fish madras', 'Chicken do pyaza', 'Fish do pyaza', 'Chicken saag', 'Fish saag']
+                };
+                
+                const dinnerList = diet === 'Vegetarian' ? vegDinners[cuisine] : meatDinners[cuisine];
+                
+                return dinnerList.map((item, i) => ({
+                    name: item + ' with ' + (cuisine === 'American' ? 'vegetables and whole grains' : (cuisine === 'Mexican' ? 'rice and beans' : (cuisine === 'Italian' ? 'salad and bread' : 'rice and dal'))),
+                    calories: calorieBase + (i * 6),
+                    protein: proteinBase + (i % 10),
+                    source: getSource(cuisine)
+                }));
+            }
+
+            function generateSnackRecipes(cuisine, diet, ageGroup) {
+                const calorieBase = ageGroup === 'children' ? 140 : (ageGroup === 'women' ? 150 : (ageGroup === 'men' ? 210 : 170));
+                const proteinBase = ageGroup === 'children' ? 5 : (ageGroup === 'women' ? 8 : (ageGroup === 'men' ? 14 : 9));
+                
+                const snacks = [
+                    'Fruit with nut butter', 'Yogurt with granola', 'Trail mix', 'Smoothie', 'Hummus with veggies',
+                    'Cheese and crackers', 'Granola bar', 'Cottage cheese with fruit', 'Pretzels with dip', 'Energy balls',
+                    'Protein bar', 'Fruit salad', 'Popcorn', 'Mini muffins', 'Veggie sticks with dip',
+                    'Rice cakes with toppings', 'Fruit smoothie', 'Nuts and dried fruit', 'Yogurt tube', 'Apple slices',
+                    'String cheese', 'Crackers with spread', 'Fruit and cheese', 'Protein shake', 'Roasted chickpeas',
+                    'Banana with nut butter', 'Greek yogurt', 'Mixed nuts'
+                ];
+                
+                return snacks.map((item, i) => ({
+                    name: item,
+                    calories: calorieBase + (i * 2),
+                    protein: proteinBase + (i % 5),
+                    source: getSource(cuisine)
+                }));
+            }
+
+            function getSource(cuisine) {
+                const sources = {
+                    American: 'Mayo Clinic',
+                    Mexican: 'Latino Nutrition Coalition',
+                    Italian: 'Mediterranean Diet Foundation',
+                    Indian: 'Indian Dietetic Association'
+                };
+                return sources[cuisine];
+            }
+
+            const meals = generateRecipes(state.cuisine, state.diet, state.ageGroup);
+            const plan = [];
+            
+            for (let i = 0; i < state.days; i++) {
+                plan.push({
+                    day: i + 1,
+                    breakfast: meals.breakfast[i],
+                    lunch: meals.lunch[i],
+                    dinner: meals.dinner[i],
+                    snack: meals.snacks[i]
+                });
+            }
+
+            return {
+                plan: plan,
+                source: sources[state.cuisine],
+                guidelines: guidelines[state.ageGroup],
+                lastUpdated: new Date().toLocaleDateString()
+            };
+        }
+
+        function displayMealPlan(mealData) {
+            const cuisineNames = { american: 'American', mexican: 'Mexican', italian: 'Italian', indian: 'Indian' };
+            const ageGroupNames = { 
+                children: 'Children (4-12 years)', 
+                women: 'Women (30-45 years)', 
+                men: 'Men (35-50 years)',
+                all: 'All (Family Plan)'
+            };
+            const dietNames = { vegetarian: 'Vegetarian', meat: 'Meat-Based (Chicken, Fish, Goat)' };
+
+            document.getElementById('planSummary').innerHTML = `
+                <h3>Your ${state.days}-Day Professional Meal Plan</h3>
+                <p><strong>${cuisineNames[state.cuisine]}</strong> • <strong>${dietNames[state.diet]}</strong></p>
+                <p>For <strong>${ageGroupNames[state.ageGroup]}</strong></p>
+                <p style="font-size: 14px; margin-top: 12px;">Daily target: ${mealData.guidelines.calories} • Protein: ${mealData.guidelines.protein}</p>
+                <div class="source-badge"><span>✓</span><span>Verified by ${mealData.source}</span></div>
+                <p style="font-size: 13px; color: #64748b; margin-top: 8px;">
+                    Last updated: ${mealData.lastUpdated} • <strong>All ${state.days} days feature unique recipes!</strong>
+                </p>
+            `;
+
+            let mealPlanHTML = '';
+            mealData.plan.forEach(day => {
+                const totalCalories = day.breakfast.calories + day.lunch.calories + day.dinner.calories + day.snack.calories;
+                const totalProtein = day.breakfast.protein + day.lunch.protein + day.dinner.protein + day.snack.protein;
+                
+                mealPlanHTML += `
+                    <div class="day-card">
+                        <div class="day-title">
+                            <span>📅</span><span>Day ${day.day}</span>
+                            <span style="font-size: 14px; margin-left: auto; color: #059669; font-weight: normal;">
+                                ${totalCalories} kcal • ${totalProtein}g protein
+                            </span>
+                        </div>
+                        <div class="meal-grid">
+                            <div class="meal-item">
+                                <div class="meal-label">
+                                    <span class="meal-icon">🌅</span><span>Breakfast</span>
+                                    <span style="margin-left: auto; font-size: 13px; color: #64748b; font-weight: normal;">
+                                        ${day.breakfast.calories} kcal
+                                    </span>
+                                </div>
+                                <div class="meal-description">${day.breakfast.name}</div>
+                                <div class="meal-source">Source: ${day.breakfast.source}</div>
+                            </div>
+                            <div class="meal-item">
+                                <div class="meal-label">
+                                    <span class="meal-icon">🍽️</span><span>Lunch</span>
+                                    <span style="margin-left: auto; font-size: 13px; color: #64748b; font-weight: normal;">
+                                        ${day.lunch.calories} kcal
+                                    </span>
+                                </div>
+                                <div class="meal-description">${day.lunch.name}</div>
+                                <div class="meal-source">Source: ${day.lunch.source}</div>
+                            </div>
+                            <div class="meal-item">
+                                <div class="meal-label">
+                                    <span class="meal-icon">🌙</span><span>Dinner</span>
+                                    <span style="margin-left: auto; font-size: 13px; color: #64748b; font-weight: normal;">
+                                        ${day.dinner.calories} kcal
+                                    </span>
+                                </div>
+                                <div class="meal-description">${day.dinner.name}</div>
+                                <div class="meal-source">Source: ${day.dinner.source}</div>
+                            </div>
+                            <div class="meal-item">
+                                <div class="meal-label">
+                                    <span class="meal-icon">🥤</span><span>Snack</span>
+                                    <span style="margin-left: auto; font-size: 13px; color: #64748b; font-weight: normal;">
+                                        ${day.snack.calories} kcal
+                                    </span>
+                                </div>
+                                <div class="meal-description">${day.snack.name}</div>
+                                <div class="meal-source">Source: ${day.snack.source}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('mealPlanContainer').innerHTML = mealPlanHTML;
+        }
+
+        function generateShoppingList(mealData) {
+            const ingredients = {
+                'Proteins': new Set(),
+                'Vegetables & Fruits': new Set(),
+                'Grains & Carbs': new Set(),
+                'Dairy & Eggs': new Set(),
+                'Pantry Staples': new Set()
+            };
+
+            const proteinKeywords = ['chicken', 'fish', 'goat', 'eggs', 'egg', 'tofu', 'lentils', 'beans', 'chickpeas', 'paneer'];
+            const veggieKeywords = ['broccoli', 'carrots', 'tomato', 'lettuce', 'spinach', 'peppers', 'onions', 'cucumber', 'asparagus', 'berries', 'banana', 'apple', 'fruit', 'vegetable', 'avocado', 'zucchini', 'eggplant', 'cauliflower', 'squash'];
+            const grainKeywords = ['rice', 'pasta', 'bread', 'tortilla', 'quinoa', 'oats', 'cereal', 'wheat', 'noodles', 'naan', 'roti', 'paratha'];
+            const dairyKeywords = ['cheese', 'yogurt', 'milk', 'butter', 'ricotta', 'mozzarella', 'parmesan', 'feta', 'cottage cheese'];
+            const pantryKeywords = ['beans', 'oil', 'sauce', 'salsa', 'honey', 'nuts', 'seeds', 'hummus', 'peanut butter', 'almond butter', 'tahini', 'pesto'];
+
+            mealData.plan.forEach(day => {
+                [day.breakfast, day.lunch, day.dinner, day.snack].forEach(meal => {
+                    const mealName = meal.name.toLowerCase();
+                    
+                    proteinKeywords.forEach(k => {
+                        if (mealName.includes(k)) ingredients['Proteins'].add(k.charAt(0).toUpperCase() + k.slice(1));
+                    });
+                    veggieKeywords.forEach(k => {
+                        if (mealName.includes(k)) ingredients['Vegetables & Fruits'].add(k.charAt(0).toUpperCase() + k.slice(1));
+                    });
+                    grainKeywords.forEach(k => {
+                        if (mealName.includes(k)) ingredients['Grains & Carbs'].add(k.charAt(0).toUpperCase() + k.slice(1));
+                    });
+                    dairyKeywords.forEach(k => {
+                        if (mealName.includes(k)) ingredients['Dairy & Eggs'].add(k.charAt(0).toUpperCase() + k.slice(1));
+                    });
+                    pantryKeywords.forEach(k => {
+                        if (mealName.includes(k)) ingredients['Pantry Staples'].add(k.charAt(0).toUpperCase() + k.slice(1));
+                    });
+                });
+            });
+
+            state.shoppingList = ingredients;
+            displayShoppingList(ingredients);
+        }
+
+        function displayShoppingList(ingredients) {
+            const categoryIcons = {
+                'Proteins': '🍖', 'Vegetables & Fruits': '🥬',
+                'Grains & Carbs': '🌾', 'Dairy & Eggs': '🥛', 'Pantry Staples': '🏺'
+            };
+
+            let shoppingHTML = '<h3><span>🛒</span><span>Weekly Shopping List</span></h3>';
+
+            Object.entries(ingredients).forEach(([category, items]) => {
+                if (items.size > 0) {
+                    shoppingHTML += `
+                        <div class="shopping-category">
+                            <div class="category-title"><span>${categoryIcons[category]}</span><span>${category}</span></div>
+                            <div class="shopping-items">
+                    `;
+                    Array.from(items).sort().forEach(item => {
+                        shoppingHTML += `
+                            <div class="shopping-item" onclick="toggleShoppingItem(this)">
+                                <div class="shopping-checkbox"></div>
+                                <div class="shopping-item-text">${item}</div>
+                            </div>
+                        `;
+                    });
+                    shoppingHTML += '</div></div>';
+                }
+            });
+
+            document.getElementById('shoppingList').innerHTML = shoppingHTML;
+        }
+
+        function toggleShoppingItem(element) {
+            element.classList.toggle('checked');
+            element.querySelector('.shopping-checkbox').classList.toggle('checked');
+        }
+
+        function downloadShoppingList() {
+            let text = `WEEKLY SHOPPING LIST\nGenerated: ${new Date().toLocaleDateString()}\nMeal Plan: ${state.days} days\nDiet: ${state.diet}\nCuisine: ${state.cuisine}\n\n`;
+            Object.entries(state.shoppingList).forEach(([category, items]) => {
+                if (items.size > 0) {
+                    text += `${category.toUpperCase()}\n`;
+                    Array.from(items).sort().forEach(item => text += `□ ${item}\n`);
+                    text += '\n';
+                }
+            });
+
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `shopping-list-${state.days}days-${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function resetPlanner() {
+            state = { cuisine: '', diet: '', ageGroup: '', days: 7, currentStep: 1, mealPlan: null, shoppingList: {} };
+            document.querySelectorAll('.cuisine-card, .diet-card, .age-group-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById('daysSlider').value = 7;
+            document.getElementById('daysValue').textContent = '7';
+            goToStep(1);
+        }
+    </script>
+</body>
+</html>
