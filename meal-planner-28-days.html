@@ -53,8 +53,18 @@
             display: flex; align-items: center; justify-content: center; gap: 16px;
         }
         .section-title-icon { font-size: 36px; }
-        .cuisine-grid, .diet-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 32px;
+        .cuisine-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        
+        .diet-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
         }
         .cuisine-card, .diet-card {
             padding: 32px; border: 3px solid var(--border); border-radius: 20px; text-align: center;
@@ -210,12 +220,286 @@
         }
         .shopping-item-text { flex: 1; color: var(--text-primary); }
         .shopping-item.checked .shopping-item-text { text-decoration: line-through; color: var(--text-secondary); }
-        .action-buttons { display: flex; gap: 12px; margin-top: 24px; }
+        .action-buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 24px; }
         .btn-icon { display: inline-flex; align-items: center; gap: 8px; }
+        
+        .calendar-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .calendar-header h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 28px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .calendar-day {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            min-height: 200px;
+            transition: all 0.3s;
+        }
+        
+        .calendar-day:hover {
+            border-color: var(--primary-light);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.1);
+        }
+        
+        .calendar-day-header {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 14px;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 4px;
+        }
+        
+        .calendar-meal {
+            font-size: 11px;
+            margin: 6px 0;
+            padding: 4px;
+            background: #f9fafb;
+            border-radius: 6px;
+        }
+        
+        .calendar-meal-type {
+            font-weight: 600;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 2px;
+        }
+        
+        .swap-meal-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 8px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .swap-meal-btn:hover {
+            background: var(--accent-dark);
+            transform: translateY(-2px);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 32px;
+            border-radius: 20px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            font-family: 'Fraunces', serif;
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        
+        .modal-close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+        
+        .meal-option {
+            padding: 16px;
+            margin: 12px 0;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .meal-option:hover {
+            border-color: var(--primary);
+            background: #f0fdf4;
+        }
+        
+        .meal-option-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .meal-option-info {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .try-recipes-banner {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 32px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 32px;
+            border: 2px solid #fbbf24;
+        }
+        
+        .try-recipes-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        
+        .try-recipes-banner h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 24px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        
+        .try-recipes-banner p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        
+        .recipe-form {
+            text-align: left;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            transition: border-color 0.2s;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .recipe-suggestions {
+            margin-top: 24px;
+        }
+        
+        .recipe-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+        
+        .recipe-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.1);
+        }
+        
+        .recipe-card-header {
+            font-family: 'Fraunces', serif;
+            font-size: 20px;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+        
+        .recipe-card-content {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        
+        .recipe-card-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .add-recipe-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .add-recipe-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .add-recipe-btn.added {
+            background: #6b7280;
+            cursor: not-allowed;
+        }
+        
+        .success-message {
+            background: #d1fae5;
+            border: 2px solid #a7f3d0;
+            color: #065f46;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            text-align: center;
+        }
         @media (max-width: 768px) {
             .container { padding: 32px 24px; }
             .header h1 { font-size: 32px; }
-            .cuisine-grid, .diet-grid, .button-group { grid-template-columns: 1fr; }
+            .cuisine-grid { grid-template-columns: 1fr; }
+            .diet-grid { grid-template-columns: 1fr; }
+            .button-group { grid-template-columns: 1fr; }
             .progress-step { width: 32px; height: 32px; font-size: 14px; }
             .progress-line { width: 32px; }
             .action-buttons { flex-direction: column; }
@@ -231,7 +515,7 @@
         <div class="header">
             <div class="header-icon">🥗</div>
             <h1>AI-Powered Meal Planner</h1>
-            <p>28 unique recipes per meal type - Never repeat a meal!<span class="unique-badge">NEW: 4 Age Groups</span></p>
+            <p>28 unique recipes per meal type - Never repeat a meal!<span class="unique-badge">NEW: Mixed Diet Option</span></p>
             <div class="ai-badge"><span>✨</span><span>Professional Health Data</span></div>
         </div>
 
@@ -245,6 +529,16 @@
             <div class="progress-step" id="step4">4</div>
             <div class="progress-line" id="line4"></div>
             <div class="progress-step" id="step5">5</div>
+        </div>
+        
+        <!-- Try New Recipes Banner -->
+        <div class="try-recipes-banner">
+            <div class="try-recipes-icon">✨</div>
+            <h3>Want to try something new?</h3>
+            <p>Get AI-powered recipe suggestions based on your preferences</p>
+            <button class="btn btn-primary" onclick="showRecipeSuggester()">
+                <span class="btn-icon"><span>🍴</span><span>Try New Recipes</span></span>
+            </button>
         </div>
 
         <!-- Step 1: Choose Cuisine -->
@@ -283,6 +577,11 @@
                     <div class="diet-icon">🍗</div>
                     <div class="diet-name">Meat-Based</div>
                     <div class="diet-desc">Chicken, fish & goat only</div>
+                </div>
+                <div class="diet-card" data-diet="both">
+                    <div class="diet-icon">🥙</div>
+                    <div class="diet-name">Both (Mixed)</div>
+                    <div class="diet-desc">Variety of both options</div>
                 </div>
             </div>
             <div class="button-group">
@@ -362,13 +661,85 @@
                 <div class="meal-plan-container" id="mealPlanContainer"></div>
                 <div class="shopping-list" id="shoppingList"></div>
                 <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="toggleCalendarView()">
+                        <span class="btn-icon"><span>📅</span><span id="calendarToggleText">Show Calendar View</span></span>
+                    </button>
+                    <button class="btn btn-primary" onclick="downloadCalendar()">
+                        <span class="btn-icon"><span>📥</span><span>Download Calendar PDF</span></span>
+                    </button>
                     <button class="btn btn-primary" onclick="downloadShoppingList()">
-                        <span class="btn-icon"><span>📥</span><span>Download Shopping List</span></span>
+                        <span class="btn-icon"><span>🛒</span><span>Download Shopping List</span></span>
                     </button>
                     <button class="btn btn-secondary" onclick="resetPlanner()">
                         <span class="btn-icon"><span>🔄</span><span>Create New Plan</span></span>
                     </button>
                 </div>
+                
+                <!-- Calendar View Container -->
+                <div id="calendarViewContainer" style="display: none; margin-top: 32px;">
+                    <div class="calendar-header">
+                        <h3>📅 Calendar View</h3>
+                        <p>Your meal plan in calendar format</p>
+                    </div>
+                    <div id="calendarGrid" class="calendar-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Meal Swap Modal -->
+    <div id="swapModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeSwapModal()">&times;</span>
+            <h2 class="modal-header">Choose a Different Meal</h2>
+            <div id="swapOptions"></div>
+        </div>
+    </div>
+    
+    <!-- Recipe Suggester Modal -->
+    <div id="recipeSuggesterModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeRecipeSuggester()">&times;</span>
+            <h2 class="modal-header">✨ Try New Recipes</h2>
+            <div id="recipeSuggesterContent">
+                <div class="recipe-form">
+                    <div class="form-group">
+                        <label class="form-label">Choose Cuisine:</label>
+                        <select id="recipeCuisine" class="form-select">
+                            <option value="">Select cuisine...</option>
+                            <option value="american">American</option>
+                            <option value="mexican">Mexican</option>
+                            <option value="italian">Italian</option>
+                            <option value="indian">Indian</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Meal Type:</label>
+                        <select id="recipeMealType" class="form-select">
+                            <option value="">Select meal type...</option>
+                            <option value="breakfast">Breakfast</option>
+                            <option value="lunch">Lunch</option>
+                            <option value="dinner">Dinner</option>
+                            <option value="snack">Snack</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Dietary Preference:</label>
+                        <select id="recipeDiet" class="form-select">
+                            <option value="">Select diet...</option>
+                            <option value="vegetarian">Vegetarian</option>
+                            <option value="meat">Meat-Based</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">What ingredients or flavors do you enjoy?</label>
+                        <textarea id="recipePreferences" class="form-textarea" placeholder="e.g., avocado, spicy, mediterranean flavors, etc."></textarea>
+                    </div>
+                    <button class="btn btn-primary btn-full" onclick="generateRecipeSuggestions()">
+                        <span class="btn-icon"><span>✨</span><span>Generate Recipe Ideas</span></span>
+                    </button>
+                </div>
+                <div id="recipeSuggestions" class="recipe-suggestions"></div>
             </div>
         </div>
     </div>
@@ -440,6 +811,7 @@
             await new Promise(resolve => setTimeout(resolve, 2000));
             const mealPlan = await fetchProfessionalMealPlan();
             state.mealPlan = mealPlan;
+            state.allRecipes = mealPlan.allRecipes; // Store all recipes for swapping
             generateShoppingList(mealPlan);
             displayMealPlan(mealPlan);
             
@@ -477,6 +849,24 @@
                             lunch: generateLunchRecipes('American', 'Meat', ageGroup),
                             dinner: generateDinnerRecipes('American', 'Meat', ageGroup),
                             snacks: generateSnackRecipes('American', 'Meat', ageGroup)
+                        },
+                        both: {
+                            breakfast: mixDietRecipes(
+                                generateBreakfastRecipes('American', 'Vegetarian', ageGroup),
+                                generateBreakfastRecipes('American', 'Meat', ageGroup)
+                            ),
+                            lunch: mixDietRecipes(
+                                generateLunchRecipes('American', 'Vegetarian', ageGroup),
+                                generateLunchRecipes('American', 'Meat', ageGroup)
+                            ),
+                            dinner: mixDietRecipes(
+                                generateDinnerRecipes('American', 'Vegetarian', ageGroup),
+                                generateDinnerRecipes('American', 'Meat', ageGroup)
+                            ),
+                            snacks: mixDietRecipes(
+                                generateSnackRecipes('American', 'Vegetarian', ageGroup),
+                                generateSnackRecipes('American', 'Meat', ageGroup)
+                            )
                         }
                     },
                     mexican: {
@@ -491,6 +881,24 @@
                             lunch: generateLunchRecipes('Mexican', 'Meat', ageGroup),
                             dinner: generateDinnerRecipes('Mexican', 'Meat', ageGroup),
                             snacks: generateSnackRecipes('Mexican', 'Meat', ageGroup)
+                        },
+                        both: {
+                            breakfast: mixDietRecipes(
+                                generateBreakfastRecipes('Mexican', 'Vegetarian', ageGroup),
+                                generateBreakfastRecipes('Mexican', 'Meat', ageGroup)
+                            ),
+                            lunch: mixDietRecipes(
+                                generateLunchRecipes('Mexican', 'Vegetarian', ageGroup),
+                                generateLunchRecipes('Mexican', 'Meat', ageGroup)
+                            ),
+                            dinner: mixDietRecipes(
+                                generateDinnerRecipes('Mexican', 'Vegetarian', ageGroup),
+                                generateDinnerRecipes('Mexican', 'Meat', ageGroup)
+                            ),
+                            snacks: mixDietRecipes(
+                                generateSnackRecipes('Mexican', 'Vegetarian', ageGroup),
+                                generateSnackRecipes('Mexican', 'Meat', ageGroup)
+                            )
                         }
                     },
                     italian: {
@@ -505,6 +913,24 @@
                             lunch: generateLunchRecipes('Italian', 'Meat', ageGroup),
                             dinner: generateDinnerRecipes('Italian', 'Meat', ageGroup),
                             snacks: generateSnackRecipes('Italian', 'Meat', ageGroup)
+                        },
+                        both: {
+                            breakfast: mixDietRecipes(
+                                generateBreakfastRecipes('Italian', 'Vegetarian', ageGroup),
+                                generateBreakfastRecipes('Italian', 'Meat', ageGroup)
+                            ),
+                            lunch: mixDietRecipes(
+                                generateLunchRecipes('Italian', 'Vegetarian', ageGroup),
+                                generateLunchRecipes('Italian', 'Meat', ageGroup)
+                            ),
+                            dinner: mixDietRecipes(
+                                generateDinnerRecipes('Italian', 'Vegetarian', ageGroup),
+                                generateDinnerRecipes('Italian', 'Meat', ageGroup)
+                            ),
+                            snacks: mixDietRecipes(
+                                generateSnackRecipes('Italian', 'Vegetarian', ageGroup),
+                                generateSnackRecipes('Italian', 'Meat', ageGroup)
+                            )
                         }
                     },
                     indian: {
@@ -519,12 +945,56 @@
                             lunch: generateLunchRecipes('Indian', 'Meat', ageGroup),
                             dinner: generateDinnerRecipes('Indian', 'Meat', ageGroup),
                             snacks: generateSnackRecipes('Indian', 'Meat', ageGroup)
+                        },
+                        both: {
+                            breakfast: mixDietRecipes(
+                                generateBreakfastRecipes('Indian', 'Vegetarian', ageGroup),
+                                generateBreakfastRecipes('Indian', 'Meat', ageGroup)
+                            ),
+                            lunch: mixDietRecipes(
+                                generateLunchRecipes('Indian', 'Vegetarian', ageGroup),
+                                generateLunchRecipes('Indian', 'Meat', ageGroup)
+                            ),
+                            dinner: mixDietRecipes(
+                                generateDinnerRecipes('Indian', 'Vegetarian', ageGroup),
+                                generateDinnerRecipes('Indian', 'Meat', ageGroup)
+                            ),
+                            snacks: mixDietRecipes(
+                                generateSnackRecipes('Indian', 'Vegetarian', ageGroup),
+                                generateSnackRecipes('Indian', 'Meat', ageGroup)
+                            )
                         }
                     }
                 };
 
                 return recipes[cuisine][diet];
             };
+            
+            // Helper function to mix vegetarian and meat recipes alternately
+            function mixDietRecipes(vegRecipes, meatRecipes) {
+                const mixed = [];
+                const maxLength = Math.max(vegRecipes.length, meatRecipes.length);
+                
+                for (let i = 0; i < maxLength; i++) {
+                    // Alternate: veg, meat, veg, meat, etc.
+                    if (i < vegRecipes.length && i % 2 === 0) {
+                        mixed.push(vegRecipes[i]);
+                    }
+                    if (i < meatRecipes.length && i % 2 === 1) {
+                        mixed.push(meatRecipes[i]);
+                    }
+                }
+                
+                // Fill remaining slots
+                while (mixed.length < 28) {
+                    const useVeg = mixed.length % 2 === 0;
+                    const sourceArray = useVeg ? vegRecipes : meatRecipes;
+                    const index = mixed.length % sourceArray.length;
+                    mixed.push(sourceArray[index]);
+                }
+                
+                return mixed.slice(0, 28);
+            }
 
             function generateBreakfastRecipes(cuisine, diet, ageGroup) {
                 const calorieBase = ageGroup === 'children' ? 340 : (ageGroup === 'women' ? 370 : (ageGroup === 'men' ? 480 : 390));
@@ -546,12 +1016,21 @@
                 
                 const breakfastList = diet === 'Vegetarian' ? vegBreakfasts[cuisine] : meatBreakfasts[cuisine];
                 
-                return breakfastList.map((item, i) => ({
+                const baseRecipes = breakfastList.map((item, i) => ({
                     name: item + (diet === 'Vegetarian' ? ' with whole wheat toast' : ' with whole grains'),
                     calories: calorieBase + (i * 3),
                     protein: proteinBase + (i % 6),
                     source: getSource(cuisine)
                 }));
+                
+                // Merge with custom recipes
+                const customKey = cuisine.toLowerCase();
+                const dietKey = diet === 'Vegetarian' ? 'vegetarian' : 'meat';
+                const customBreakfasts = customRecipes[customKey] && customRecipes[customKey][dietKey] && customRecipes[customKey][dietKey].breakfast 
+                    ? customRecipes[customKey][dietKey].breakfast 
+                    : [];
+                
+                return [...baseRecipes, ...customBreakfasts];
             }
 
             function generateLunchRecipes(cuisine, diet, ageGroup) {
@@ -656,6 +1135,7 @@
 
             return {
                 plan: plan,
+                allRecipes: meals, // Store all recipes for swapping
                 source: sources[state.cuisine],
                 guidelines: guidelines[state.ageGroup],
                 lastUpdated: new Date().toLocaleDateString()
@@ -670,7 +1150,11 @@
                 men: 'Men (35-50 years)',
                 all: 'All (Family Plan)'
             };
-            const dietNames = { vegetarian: 'Vegetarian', meat: 'Meat-Based (Chicken, Fish, Goat)' };
+            const dietNames = { 
+                vegetarian: 'Vegetarian', 
+                meat: 'Meat-Based (Chicken, Fish, Goat)',
+                both: 'Both (Mixed - Vegetarian & Meat)'
+            };
 
             document.getElementById('planSummary').innerHTML = `
                 <h3>Your ${state.days}-Day Professional Meal Plan</h3>
@@ -706,6 +1190,7 @@
                                 </div>
                                 <div class="meal-description">${day.breakfast.name}</div>
                                 <div class="meal-source">Source: ${day.breakfast.source}</div>
+                                <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'breakfast')">🔄 Swap Meal</button>
                             </div>
                             <div class="meal-item">
                                 <div class="meal-label">
@@ -716,6 +1201,7 @@
                                 </div>
                                 <div class="meal-description">${day.lunch.name}</div>
                                 <div class="meal-source">Source: ${day.lunch.source}</div>
+                                <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'lunch')">🔄 Swap Meal</button>
                             </div>
                             <div class="meal-item">
                                 <div class="meal-label">
@@ -726,6 +1212,7 @@
                                 </div>
                                 <div class="meal-description">${day.dinner.name}</div>
                                 <div class="meal-source">Source: ${day.dinner.source}</div>
+                                <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'dinner')">🔄 Swap Meal</button>
                             </div>
                             <div class="meal-item">
                                 <div class="meal-label">
@@ -736,6 +1223,7 @@
                                 </div>
                                 <div class="meal-description">${day.snack.name}</div>
                                 <div class="meal-source">Source: ${day.snack.source}</div>
+                                <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'snack')">🔄 Swap Meal</button>
                             </div>
                         </div>
                     </div>
@@ -843,12 +1331,413 @@
         }
 
         function resetPlanner() {
-            state = { cuisine: '', diet: '', ageGroup: '', days: 7, currentStep: 1, mealPlan: null, shoppingList: {} };
+            state = { cuisine: '', diet: '', ageGroup: '', days: 7, currentStep: 1, mealPlan: null, shoppingList: {}, allRecipes: null };
             document.querySelectorAll('.cuisine-card, .diet-card, .age-group-card').forEach(c => c.classList.remove('selected'));
             document.getElementById('daysSlider').value = 7;
             document.getElementById('daysValue').textContent = '7';
+            document.getElementById('calendarViewContainer').style.display = 'none';
             goToStep(1);
         }
+        
+        // Calendar View Functions
+        function toggleCalendarView() {
+            const calendarContainer = document.getElementById('calendarViewContainer');
+            const toggleBtn = document.getElementById('calendarToggleText');
+            
+            if (calendarContainer.style.display === 'none') {
+                renderCalendarView();
+                calendarContainer.style.display = 'block';
+                toggleBtn.textContent = 'Hide Calendar View';
+            } else {
+                calendarContainer.style.display = 'none';
+                toggleBtn.textContent = 'Show Calendar View';
+            }
+        }
+        
+        function renderCalendarView() {
+            const calendarGrid = document.getElementById('calendarGrid');
+            let calendarHTML = '';
+            
+            state.mealPlan.plan.forEach((day) => {
+                calendarHTML += `
+                    <div class="calendar-day">
+                        <div class="calendar-day-header">Day ${day.day}</div>
+                        <div class="calendar-meal">
+                            <span class="calendar-meal-type">🌅 Breakfast</span>
+                            ${truncateText(day.breakfast.name, 40)}
+                        </div>
+                        <div class="calendar-meal">
+                            <span class="calendar-meal-type">🍽️ Lunch</span>
+                            ${truncateText(day.lunch.name, 40)}
+                        </div>
+                        <div class="calendar-meal">
+                            <span class="calendar-meal-type">🌙 Dinner</span>
+                            ${truncateText(day.dinner.name, 40)}
+                        </div>
+                        <div class="calendar-meal">
+                            <span class="calendar-meal-type">🥤 Snack</span>
+                            ${truncateText(day.snack.name, 40)}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            calendarGrid.innerHTML = calendarHTML;
+        }
+        
+        function truncateText(text, maxLength) {
+            return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+        }
+        
+        function downloadCalendar() {
+            // Create printable calendar view
+            const printWindow = window.open('', '_blank');
+            const cuisineNames = { american: 'American', mexican: 'Mexican', italian: 'Italian', indian: 'Indian' };
+            const ageGroupNames = { 
+                children: 'Children (4-12 years)', 
+                women: 'Women (30-45 years)', 
+                men: 'Men (35-50 years)',
+                all: 'All (Family Plan)'
+            };
+            const dietNames = { 
+                vegetarian: 'Vegetarian', 
+                meat: 'Meat-Based (Chicken, Fish, Goat)',
+                both: 'Both (Mixed - Vegetarian & Meat)'
+            };
+            
+            let calendarHTML = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${state.days}-Day Meal Plan Calendar</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        .header { text-align: center; margin-bottom: 30px; }
+                        .header h1 { color: #059669; margin-bottom: 10px; }
+                        .info { background: #f0fdf4; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+                        .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+                        .day { border: 2px solid #d1fae5; padding: 10px; border-radius: 8px; page-break-inside: avoid; }
+                        .day-header { font-weight: bold; color: #059669; border-bottom: 2px solid #10b981; padding-bottom: 5px; margin-bottom: 10px; }
+                        .meal { margin: 8px 0; font-size: 11px; }
+                        .meal-type { font-weight: bold; color: #047857; display: block; margin-bottom: 2px; }
+                        @media print {
+                            .no-print { display: none; }
+                            body { padding: 10px; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>🥗 ${state.days}-Day Meal Plan Calendar</h1>
+                        <p>${cuisineNames[state.cuisine]} • ${dietNames[state.diet]} • ${ageGroupNames[state.ageGroup]}</p>
+                    </div>
+                    <div class="info">
+                        <strong>Generated:</strong> ${new Date().toLocaleDateString()} | 
+                        <strong>Target:</strong> ${state.mealPlan.guidelines.calories} | 
+                        <strong>Protein:</strong> ${state.mealPlan.guidelines.protein}
+                    </div>
+                    <button class="no-print" onclick="window.print()" style="padding: 10px 20px; background: #059669; color: white; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 20px;">📥 Download PDF</button>
+                    <div class="calendar">
+            `;
+            
+            state.mealPlan.plan.forEach((day) => {
+                calendarHTML += `
+                    <div class="day">
+                        <div class="day-header">Day ${day.day}</div>
+                        <div class="meal">
+                            <span class="meal-type">🌅 Breakfast</span>
+                            ${day.breakfast.name}
+                        </div>
+                        <div class="meal">
+                            <span class="meal-type">🍽️ Lunch</span>
+                            ${day.lunch.name}
+                        </div>
+                        <div class="meal">
+                            <span class="meal-type">🌙 Dinner</span>
+                            ${day.dinner.name}
+                        </div>
+                        <div class="meal">
+                            <span class="meal-type">🥤 Snack</span>
+                            ${day.snack.name}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            calendarHTML += `
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            printWindow.document.write(calendarHTML);
+            printWindow.document.close();
+        }
+        
+        // Meal Swap Functions
+        let currentSwapDay = null;
+        let currentSwapMealType = null;
+        
+        function openSwapModal(dayNumber, mealType) {
+            currentSwapDay = dayNumber;
+            currentSwapMealType = mealType;
+            
+            // Get alternative recipes for this meal type
+            const mealTypeKey = mealType === 'snack' ? 'snacks' : mealType;
+            const allMealsOfType = state.allRecipes[mealTypeKey];
+            const currentMeal = state.mealPlan.plan[dayNumber - 1][mealType];
+            
+            // Filter out the current meal and show alternatives
+            const alternatives = allMealsOfType.filter(meal => meal.name !== currentMeal.name).slice(0, 8);
+            
+            let optionsHTML = `
+                <p style="margin-bottom: 16px; color: #64748b;">
+                    Currently: <strong>${currentMeal.name}</strong><br>
+                    Choose a replacement:
+                </p>
+            `;
+            
+            alternatives.forEach((meal, index) => {
+                optionsHTML += `
+                    <div class="meal-option" onclick="swapMeal(${index})">
+                        <div class="meal-option-name">${meal.name}</div>
+                        <div class="meal-option-info">
+                            ${meal.calories} kcal • ${meal.protein}g protein • ${meal.source}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('swapOptions').innerHTML = optionsHTML;
+            document.getElementById('swapModal').style.display = 'block';
+            
+            // Store alternatives for swapping
+            window.currentAlternatives = alternatives;
+        }
+        
+        function closeSwapModal() {
+            document.getElementById('swapModal').style.display = 'none';
+            currentSwapDay = null;
+            currentSwapMealType = null;
+        }
+        
+        function swapMeal(alternativeIndex) {
+            const newMeal = window.currentAlternatives[alternativeIndex];
+            
+            // Update the meal in the plan
+            state.mealPlan.plan[currentSwapDay - 1][currentSwapMealType] = newMeal;
+            
+            // Re-render the meal plan
+            displayMealPlan(state.mealPlan);
+            
+            // Update calendar if visible
+            if (document.getElementById('calendarViewContainer').style.display !== 'none') {
+                renderCalendarView();
+            }
+            
+            closeSwapModal();
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('swapModal');
+            if (event.target === modal) {
+                closeSwapModal();
+            }
+            const recipeModal = document.getElementById('recipeSuggesterModal');
+            if (event.target === recipeModal) {
+                closeRecipeSuggester();
+            }
+        }
+        
+        // Recipe Suggester Functions
+        let customRecipes = {
+            american: { vegetarian: { breakfast: [], lunch: [], dinner: [], snacks: [] }, meat: { breakfast: [], lunch: [], dinner: [], snacks: [] } },
+            mexican: { vegetarian: { breakfast: [], lunch: [], dinner: [], snacks: [] }, meat: { breakfast: [], lunch: [], dinner: [], snacks: [] } },
+            italian: { vegetarian: { breakfast: [], lunch: [], dinner: [], snacks: [] }, meat: { breakfast: [], lunch: [], dinner: [], snacks: [] } },
+            indian: { vegetarian: { breakfast: [], lunch: [], dinner: [], snacks: [] }, meat: { breakfast: [], lunch: [], dinner: [], snacks: [] } }
+        };
+        
+        function showRecipeSuggester() {
+            document.getElementById('recipeSuggesterModal').style.display = 'block';
+            document.getElementById('recipeSuggestions').innerHTML = '';
+        }
+        
+        function closeRecipeSuggester() {
+            document.getElementById('recipeSuggesterModal').style.display = 'none';
+        }
+        
+        function generateRecipeSuggestions() {
+            const cuisine = document.getElementById('recipeCuisine').value;
+            const mealType = document.getElementById('recipeMealType').value;
+            const diet = document.getElementById('recipeDiet').value;
+            const preferences = document.getElementById('recipePreferences').value;
+            
+            if (!cuisine || !mealType || !diet) {
+                alert('Please fill in all required fields (cuisine, meal type, and diet)');
+                return;
+            }
+            
+            // Generate 3-5 recipe suggestions based on inputs
+            const suggestions = generateAIRecipeSuggestions(cuisine, mealType, diet, preferences);
+            
+            displayRecipeSuggestions(suggestions, cuisine, mealType, diet);
+        }
+        
+        function generateAIRecipeSuggestions(cuisine, mealType, diet, preferences) {
+            // AI-powered recipe generation based on cuisine, meal type, diet, and preferences
+            const suggestions = [];
+            const numSuggestions = 3 + Math.floor(Math.random() * 3); // 3-5 suggestions
+            
+            // Base ingredients by cuisine
+            const cuisineIngredients = {
+                american: {
+                    vegetarian: ['avocado', 'eggs', 'cheese', 'quinoa', 'beans', 'sweet potato', 'kale', 'tofu'],
+                    meat: ['chicken breast', 'salmon', 'turkey', 'tilapia', 'chicken thighs', 'cod', 'chicken sausage']
+                },
+                mexican: {
+                    vegetarian: ['black beans', 'corn', 'peppers', 'avocado', 'cheese', 'tortillas', 'cilantro', 'lime'],
+                    meat: ['chicken', 'fish', 'goat', 'shrimp']
+                },
+                italian: {
+                    vegetarian: ['mozzarella', 'tomatoes', 'basil', 'pasta', 'eggplant', 'zucchini', 'ricotta', 'spinach'],
+                    meat: ['chicken', 'fish', 'Italian sausage (chicken)', 'anchovies']
+                },
+                indian: {
+                    vegetarian: ['lentils', 'chickpeas', 'paneer', 'curry leaves', 'spinach', 'cauliflower', 'potatoes', 'yogurt'],
+                    meat: ['chicken', 'fish', 'goat', 'lamb']
+                }
+            };
+            
+            // Cooking methods by meal type
+            const cookingMethods = {
+                breakfast: ['scrambled', 'poached', 'baked', 'toasted', 'grilled'],
+                lunch: ['grilled', 'roasted', 'sautéed', 'steamed', 'baked'],
+                dinner: ['roasted', 'grilled', 'braised', 'curry', 'stir-fried'],
+                snack: ['raw', 'baked', 'roasted', 'fresh']
+            };
+            
+            const ingredients = cuisineIngredients[cuisine][diet];
+            const methods = cookingMethods[mealType];
+            
+            // Parse user preferences
+            const userPrefs = preferences.toLowerCase().split(',').map(p => p.trim());
+            
+            for (let i = 0; i < numSuggestions; i++) {
+                const ingredient1 = ingredients[Math.floor(Math.random() * ingredients.length)];
+                const ingredient2 = ingredients[Math.floor(Math.random() * ingredients.length)];
+                const method = methods[Math.floor(Math.random() * methods.length)];
+                
+                let recipeName = '';
+                let recipeDescription = '';
+                
+                // Generate creative recipe names
+                if (mealType === 'breakfast') {
+                    recipeName = `${method.charAt(0).toUpperCase() + method.slice(1)} ${ingredient1} with ${ingredient2}`;
+                } else if (mealType === 'lunch' || mealType === 'dinner') {
+                    recipeName = `${method.charAt(0).toUpperCase() + method.slice(1)} ${ingredient1} and ${ingredient2}`;
+                } else {
+                    recipeName = `${ingredient1.charAt(0).toUpperCase() + ingredient1.slice(1)} with ${ingredient2}`;
+                }
+                
+                // Add cuisine flair
+                if (cuisine === 'mexican') {
+                    recipeName += ' with salsa and lime';
+                } else if (cuisine === 'italian') {
+                    recipeName += ' with herbs and olive oil';
+                } else if (cuisine === 'indian') {
+                    recipeName += ' with spices and curry';
+                }
+                
+                // Incorporate user preferences if provided
+                if (userPrefs.length > 0 && userPrefs[0] !== '') {
+                    const pref = userPrefs[Math.floor(Math.random() * userPrefs.length)];
+                    recipeDescription = `Features ${pref} for added flavor. `;
+                }
+                
+                recipeDescription += `A delicious ${cuisine} ${mealType} combining ${ingredient1} and ${ingredient2}. `;
+                
+                // Generate realistic nutritional values
+                const baseCalories = mealType === 'breakfast' ? 350 : (mealType === 'lunch' ? 450 : (mealType === 'dinner' ? 550 : 150));
+                const calories = baseCalories + Math.floor(Math.random() * 100) - 50;
+                const protein = diet === 'meat' ? 25 + Math.floor(Math.random() * 15) : 15 + Math.floor(Math.random() * 10);
+                
+                suggestions.push({
+                    name: recipeName,
+                    description: recipeDescription,
+                    calories: calories,
+                    protein: protein,
+                    source: 'AI-Generated Recipe'
+                });
+            }
+            
+            return suggestions;
+        }
+        
+        function displayRecipeSuggestions(suggestions, cuisine, mealType, diet) {
+            let html = '<h3 style="margin-top: 24px; margin-bottom: 16px; font-family: Fraunces, serif;">Generated Recipe Suggestions:</h3>';
+            
+            suggestions.forEach((recipe, index) => {
+                html += `
+                    <div class="recipe-card">
+                        <div class="recipe-card-header">${recipe.name}</div>
+                        <div class="recipe-card-content">
+                            ${recipe.description}<br>
+                            <strong>Nutrition:</strong> ${recipe.calories} kcal • ${recipe.protein}g protein
+                        </div>
+                        <div class="recipe-card-actions">
+                            <button class="add-recipe-btn" id="addBtn${index}" onclick="addRecipeToRepository(${index}, '${cuisine}', '${mealType}', '${diet}')">
+                                ➕ Add to Recipe Library
+                            </button>
+                        </div>
+                        <div id="successMsg${index}" style="display: none;" class="success-message">
+                            ✅ Recipe added to your ${cuisine} ${mealType} collection!
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('recipeSuggestions').innerHTML = html;
+            
+            // Store current suggestions
+            window.currentSuggestions = suggestions;
+        }
+        
+        function addRecipeToRepository(index, cuisine, mealType, diet) {
+            const recipe = window.currentSuggestions[index];
+            const mealTypeKey = mealType === 'snack' ? 'snacks' : mealType;
+            
+            // Add to custom recipes
+            customRecipes[cuisine][diet][mealTypeKey].push(recipe);
+            
+            // Update button state
+            const btn = document.getElementById('addBtn' + index);
+            btn.textContent = '✓ Added';
+            btn.classList.add('added');
+            btn.disabled = true;
+            
+            // Show success message
+            document.getElementById('successMsg' + index).style.display = 'block';
+            
+            // Update local storage to persist recipes
+            try {
+                localStorage.setItem('customRecipes', JSON.stringify(customRecipes));
+            } catch (e) {
+                console.log('Could not save to localStorage');
+            }
+        }
+        
+        // Load custom recipes from localStorage on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const saved = localStorage.getItem('customRecipes');
+                if (saved) {
+                    customRecipes = JSON.parse(saved);
+                }
+            } catch (e) {
+                console.log('Could not load from localStorage');
+            }
+        });
     </script>
 </body>
 </html>
