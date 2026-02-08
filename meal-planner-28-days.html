@@ -221,6 +221,7 @@
         .shopping-item-text { flex: 1; color: var(--text-primary); }
         .shopping-item.checked .shopping-item-text { text-decoration: line-through; color: var(--text-secondary); }
         .action-buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 24px; }
+        .action-buttons button:last-child { grid-column: 1 / -1; }
         .btn-icon { display: inline-flex; align-items: center; gap: 8px; }
         
         .calendar-header {
@@ -494,6 +495,47 @@
             margin-top: 12px;
             text-align: center;
         }
+        
+        .gcal-info {
+            background: #f0fdf4;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #bbf7d0;
+        }
+        
+        .gcal-buttons {
+            margin-top: 20px;
+        }
+        
+        .gcal-day-btn {
+            background: white;
+            border: 2px solid var(--border);
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            display: block;
+            width: 100%;
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .gcal-day-btn:hover {
+            border-color: var(--primary);
+            background: #f0fdf4;
+            transform: translateX(4px);
+        }
+        
+        .gcal-day-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        
+        .gcal-day-meals {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
         @media (max-width: 768px) {
             .container { padding: 32px 24px; }
             .header h1 { font-size: 32px; }
@@ -530,24 +572,14 @@
             <div class="progress-line" id="line4"></div>
             <div class="progress-step" id="step5">5</div>
         </div>
-        
-        <!-- Try New Recipes Banner -->
-        <div class="try-recipes-banner">
-            <div class="try-recipes-icon">✨</div>
-            <h3>Want to try something new?</h3>
-            <p>Get AI-powered recipe suggestions based on your preferences</p>
-            <button class="btn btn-primary" onclick="showRecipeSuggester()">
-                <span class="btn-icon"><span>🍴</span><span>Try New Recipes</span></span>
-            </button>
-        </div>
 
         <!-- Step 1: Choose Cuisine -->
         <div class="section active" id="section1">
             <h2 class="section-title"><span class="section-title-icon">🌍</span>Choose Your Cuisine</h2>
             <div class="cuisine-grid">
-                <div class="cuisine-card" data-cuisine="american">
-                    <div class="cuisine-emoji">🍔</div>
-                    <div class="cuisine-name">American</div>
+                <div class="cuisine-card" data-cuisine="indian">
+                    <div class="cuisine-emoji">🍛</div>
+                    <div class="cuisine-name">Indian</div>
                 </div>
                 <div class="cuisine-card" data-cuisine="mexican">
                     <div class="cuisine-emoji">🌮</div>
@@ -557,9 +589,9 @@
                     <div class="cuisine-emoji">🍝</div>
                     <div class="cuisine-name">Italian</div>
                 </div>
-                <div class="cuisine-card" data-cuisine="indian">
-                    <div class="cuisine-emoji">🍛</div>
-                    <div class="cuisine-name">Indian</div>
+                <div class="cuisine-card" data-cuisine="american">
+                    <div class="cuisine-emoji">🍔</div>
+                    <div class="cuisine-name">American</div>
                 </div>
             </div>
         </div>
@@ -660,12 +692,26 @@
                 <div class="plan-summary" id="planSummary"></div>
                 <div class="meal-plan-container" id="mealPlanContainer"></div>
                 <div class="shopping-list" id="shoppingList"></div>
+                
+                <!-- Try New Recipes Banner (after meal plan) -->
+                <div class="try-recipes-banner" style="margin-top: 32px;">
+                    <div class="try-recipes-icon">✨</div>
+                    <h3>Want to try something new?</h3>
+                    <p>Get AI-powered recipe suggestions to expand your meal plan</p>
+                    <button class="btn btn-primary" onclick="showRecipeSuggester()">
+                        <span class="btn-icon"><span>🍴</span><span>Try New Recipes</span></span>
+                    </button>
+                </div>
+                
                 <div class="action-buttons">
                     <button class="btn btn-primary" onclick="toggleCalendarView()">
                         <span class="btn-icon"><span>📅</span><span id="calendarToggleText">Show Calendar View</span></span>
                     </button>
                     <button class="btn btn-primary" onclick="downloadCalendar()">
                         <span class="btn-icon"><span>📥</span><span>Download Calendar PDF</span></span>
+                    </button>
+                    <button class="btn btn-primary" onclick="exportToGoogleCalendar()">
+                        <span class="btn-icon"><span>📆</span><span>Add to Google Calendar</span></span>
                     </button>
                     <button class="btn btn-primary" onclick="downloadShoppingList()">
                         <span class="btn-icon"><span>🛒</span><span>Download Shopping List</span></span>
@@ -707,10 +753,10 @@
                         <label class="form-label">Choose Cuisine:</label>
                         <select id="recipeCuisine" class="form-select">
                             <option value="">Select cuisine...</option>
-                            <option value="american">American</option>
+                            <option value="indian">Indian</option>
                             <option value="mexican">Mexican</option>
                             <option value="italian">Italian</option>
-                            <option value="indian">Indian</option>
+                            <option value="american">American</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -740,6 +786,84 @@
                     </button>
                 </div>
                 <div id="recipeSuggestions" class="recipe-suggestions"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Google Calendar Export Modal -->
+    <div id="googleCalendarModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeGoogleCalendarModal()">&times;</span>
+            <h2 class="modal-header">📆 Export to Google Calendar</h2>
+            <div id="googleCalendarContent">
+                <div class="gcal-info">
+                    <p style="margin-bottom: 16px; color: #64748b;">
+                        Add your meal plan to Google Calendar. Choose how you'd like to export:
+                    </p>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Start Date:</label>
+                        <input type="date" id="gcalStartDate" class="form-input" />
+                        <p style="font-size: 13px; color: #64748b; margin-top: 4px;">
+                            Your meal plan will start from this date
+                        </p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Meal Times:</label>
+                        <div style="display: grid; gap: 12px; margin-top: 8px;">
+                            <div>
+                                <label style="font-size: 14px; color: #64748b;">🌅 Breakfast Time:</label>
+                                <input type="time" id="breakfastTime" class="form-input" value="07:00" />
+                            </div>
+                            <div>
+                                <label style="font-size: 14px; color: #64748b;">🍽️ Lunch Time:</label>
+                                <input type="time" id="lunchTime" class="form-input" value="12:00" />
+                            </div>
+                            <div>
+                                <label style="font-size: 14px; color: #64748b;">🌙 Dinner Time:</label>
+                                <input type="time" id="dinnerTime" class="form-input" value="18:00" />
+                            </div>
+                            <div>
+                                <label style="font-size: 14px; color: #64748b;">🥤 Snack Time:</label>
+                                <input type="time" id="snackTime" class="form-input" value="15:00" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Event Duration:</label>
+                        <select id="eventDuration" class="form-select">
+                            <option value="30">30 minutes</option>
+                            <option value="60" selected>1 hour</option>
+                            <option value="90">1.5 hours</option>
+                            <option value="120">2 hours</option>
+                        </select>
+                    </div>
+                    
+                    <div class="gcal-buttons">
+                        <button class="btn btn-primary btn-full" onclick="generateGoogleCalendarLinks()">
+                            <span class="btn-icon"><span>📆</span><span>Generate Calendar Events</span></span>
+                        </button>
+                        <button class="btn btn-secondary btn-full" onclick="createICSFile()" style="margin-top: 12px;">
+                            <span class="btn-icon"><span>📥</span><span>Download ICS File</span></span>
+                        </button>
+                        <p style="font-size: 12px; color: #64748b; margin-top: 8px; text-align: center;">
+                            ICS file works with Google Calendar, Apple Calendar, Outlook, and more
+                        </p>
+                    </div>
+                </div>
+                
+                <div id="gcalLinks" style="display: none; margin-top: 24px;">
+                    <div class="success-message" style="margin-bottom: 16px;">
+                        ✅ Calendar events ready! Click the buttons below to add to Google Calendar.
+                    </div>
+                    <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">
+                        Each button opens a new tab to add that day's meals to your Google Calendar. 
+                        You'll need to be signed in to Google.
+                    </p>
+                    <div id="gcalLinkButtons" style="display: grid; gap: 8px;"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -821,10 +945,10 @@
 
         async function fetchProfessionalMealPlan() {
             const sources = {
-                american: "American Dietetic Association",
+                indian: "Indian Dietetic Association",
                 mexican: "Latino Nutrition Coalition",
                 italian: "Mediterranean Diet Foundation",
-                indian: "Indian Dietetic Association"
+                american: "American Dietetic Association"
             };
 
             const guidelines = {
@@ -837,35 +961,35 @@
             // Recipe generator function - creates 28 unique recipes dynamically
             const generateRecipes = (cuisine, diet, ageGroup) => {
                 const recipes = {
-                    american: {
+                    indian: {
                         vegetarian: {
-                            breakfast: generateBreakfastRecipes('American', 'Vegetarian', ageGroup),
-                            lunch: generateLunchRecipes('American', 'Vegetarian', ageGroup),
-                            dinner: generateDinnerRecipes('American', 'Vegetarian', ageGroup),
-                            snacks: generateSnackRecipes('American', 'Vegetarian', ageGroup)
+                            breakfast: generateBreakfastRecipes('Indian', 'Vegetarian', ageGroup),
+                            lunch: generateLunchRecipes('Indian', 'Vegetarian', ageGroup),
+                            dinner: generateDinnerRecipes('Indian', 'Vegetarian', ageGroup),
+                            snacks: generateSnackRecipes('Indian', 'Vegetarian', ageGroup)
                         },
                         meat: {
-                            breakfast: generateBreakfastRecipes('American', 'Meat', ageGroup),
-                            lunch: generateLunchRecipes('American', 'Meat', ageGroup),
-                            dinner: generateDinnerRecipes('American', 'Meat', ageGroup),
-                            snacks: generateSnackRecipes('American', 'Meat', ageGroup)
+                            breakfast: generateBreakfastRecipes('Indian', 'Meat', ageGroup),
+                            lunch: generateLunchRecipes('Indian', 'Meat', ageGroup),
+                            dinner: generateDinnerRecipes('Indian', 'Meat', ageGroup),
+                            snacks: generateSnackRecipes('Indian', 'Meat', ageGroup)
                         },
                         both: {
                             breakfast: mixDietRecipes(
-                                generateBreakfastRecipes('American', 'Vegetarian', ageGroup),
-                                generateBreakfastRecipes('American', 'Meat', ageGroup)
+                                generateBreakfastRecipes('Indian', 'Vegetarian', ageGroup),
+                                generateBreakfastRecipes('Indian', 'Meat', ageGroup)
                             ),
                             lunch: mixDietRecipes(
-                                generateLunchRecipes('American', 'Vegetarian', ageGroup),
-                                generateLunchRecipes('American', 'Meat', ageGroup)
+                                generateLunchRecipes('Indian', 'Vegetarian', ageGroup),
+                                generateLunchRecipes('Indian', 'Meat', ageGroup)
                             ),
                             dinner: mixDietRecipes(
-                                generateDinnerRecipes('American', 'Vegetarian', ageGroup),
-                                generateDinnerRecipes('American', 'Meat', ageGroup)
+                                generateDinnerRecipes('Indian', 'Vegetarian', ageGroup),
+                                generateDinnerRecipes('Indian', 'Meat', ageGroup)
                             ),
                             snacks: mixDietRecipes(
-                                generateSnackRecipes('American', 'Vegetarian', ageGroup),
-                                generateSnackRecipes('American', 'Meat', ageGroup)
+                                generateSnackRecipes('Indian', 'Vegetarian', ageGroup),
+                                generateSnackRecipes('Indian', 'Meat', ageGroup)
                             )
                         }
                     },
@@ -933,35 +1057,35 @@
                             )
                         }
                     },
-                    indian: {
+                    american: {
                         vegetarian: {
-                            breakfast: generateBreakfastRecipes('Indian', 'Vegetarian', ageGroup),
-                            lunch: generateLunchRecipes('Indian', 'Vegetarian', ageGroup),
-                            dinner: generateDinnerRecipes('Indian', 'Vegetarian', ageGroup),
-                            snacks: generateSnackRecipes('Indian', 'Vegetarian', ageGroup)
+                            breakfast: generateBreakfastRecipes('American', 'Vegetarian', ageGroup),
+                            lunch: generateLunchRecipes('American', 'Vegetarian', ageGroup),
+                            dinner: generateDinnerRecipes('American', 'Vegetarian', ageGroup),
+                            snacks: generateSnackRecipes('American', 'Vegetarian', ageGroup)
                         },
                         meat: {
-                            breakfast: generateBreakfastRecipes('Indian', 'Meat', ageGroup),
-                            lunch: generateLunchRecipes('Indian', 'Meat', ageGroup),
-                            dinner: generateDinnerRecipes('Indian', 'Meat', ageGroup),
-                            snacks: generateSnackRecipes('Indian', 'Meat', ageGroup)
+                            breakfast: generateBreakfastRecipes('American', 'Meat', ageGroup),
+                            lunch: generateLunchRecipes('American', 'Meat', ageGroup),
+                            dinner: generateDinnerRecipes('American', 'Meat', ageGroup),
+                            snacks: generateSnackRecipes('American', 'Meat', ageGroup)
                         },
                         both: {
                             breakfast: mixDietRecipes(
-                                generateBreakfastRecipes('Indian', 'Vegetarian', ageGroup),
-                                generateBreakfastRecipes('Indian', 'Meat', ageGroup)
+                                generateBreakfastRecipes('American', 'Vegetarian', ageGroup),
+                                generateBreakfastRecipes('American', 'Meat', ageGroup)
                             ),
                             lunch: mixDietRecipes(
-                                generateLunchRecipes('Indian', 'Vegetarian', ageGroup),
-                                generateLunchRecipes('Indian', 'Meat', ageGroup)
+                                generateLunchRecipes('American', 'Vegetarian', ageGroup),
+                                generateLunchRecipes('American', 'Meat', ageGroup)
                             ),
                             dinner: mixDietRecipes(
-                                generateDinnerRecipes('Indian', 'Vegetarian', ageGroup),
-                                generateDinnerRecipes('Indian', 'Meat', ageGroup)
+                                generateDinnerRecipes('American', 'Vegetarian', ageGroup),
+                                generateDinnerRecipes('American', 'Meat', ageGroup)
                             ),
                             snacks: mixDietRecipes(
-                                generateSnackRecipes('Indian', 'Vegetarian', ageGroup),
-                                generateSnackRecipes('Indian', 'Meat', ageGroup)
+                                generateSnackRecipes('American', 'Vegetarian', ageGroup),
+                                generateSnackRecipes('American', 'Meat', ageGroup)
                             )
                         }
                     }
@@ -1001,17 +1125,17 @@
                 const proteinBase = ageGroup === 'children' ? 12 : (ageGroup === 'women' ? 16 : (ageGroup === 'men' ? 28 : 18));
                 
                 const vegBreakfasts = {
-                    American: ['Whole grain pancakes', 'Veggie omelet', 'Oatmeal', 'French toast', 'Breakfast burrito', 'Yogurt parfait', 'Smoothie bowl', 'Waffles', 'Quesadilla', 'Overnight oats', 'Scrambled tofu', 'Bagel with cream cheese', 'Breakfast sandwich', 'Granola with milk', 'Chia pudding', 'Avocado toast', 'Protein pancakes', 'Cottage cheese bowl', 'Breakfast tacos', 'Fruit and nut bowl', 'Veggie hash', 'Breakfast pizza', 'Quinoa bowl', 'Breakfast wrap', 'Shakshuka', 'Muffins', 'Cereal bowl', 'English muffin sandwich'],
+                    Indian: ['Idli with sambar and coconut chutney', 'Dosa with potato masala', 'Appam with vegetable stew', 'Upma with coconut', 'Pongal with sambar', 'Uttapam with tomato and onion', 'Rava dosa with chutney', 'Medu vada with sambar', 'Pesarattu with ginger chutney', 'Puttu with kadala curry', 'Idiyappam with coconut milk curry', 'Paniyaram with chutney', 'Adai with avial', 'Ven pongal with sambhar', 'Sweet pongal', 'Ragi dosa with chutney', 'Kuzhi paniyaram', 'Semiya upma', 'Tapioca with green gram curry', 'Kerala parotta with kurma', 'Poori with potato masala', 'Masala dosa', 'Onion rava dosa', 'Oats idli', 'Multigrain dosa', 'Set dosa with chutney', 'Vegetable uthappam', 'Nei dosa'],
                     Mexican: ['Bean and cheese burrito', 'Huevos rancheros', 'Chilaquiles', 'Breakfast tacos', 'Molletes', 'Pan dulce with fruit', 'Veggie quesadilla', 'Mexican omelet', 'Avocado toast Mexican style', 'Fruit salad with chili', 'Bean and egg wrap', 'Churro French toast', 'Mexican breakfast bowl', 'Nopal salad', 'Sweet corn cakes', 'Breakfast enchiladas', 'Tamales', 'Veggie torta', 'Mexican scramble', 'Breakfast tostada', 'Bean gorditas', 'Fruit smoothie bowl', 'Mexican frittata', 'Breakfast chimichanga', 'Veggie sopes', 'Mexican yogurt parfait', 'Breakfast flautas', 'Mexican crepes'],
                     Italian: ['Frittata', 'Ricotta toast', 'Yogurt with fruit', 'Whole grain toast with tomato', 'Smoothie with berries', 'Poached eggs', 'Oatmeal with nuts', 'Italian omelet', 'Breakfast focaccia', 'Biscotti with milk', 'Panettone with fruit', 'Italian yogurt bowl', 'Eggs with bruschetta', 'Breakfast polenta', 'Italian breakfast wrap', 'Cappuccino bowl', 'Breakfast piadina', 'Italian scramble', 'Breakfast crostini', 'Italian pancakes', 'Ricotta pancakes', 'Italian egg muffins', 'Breakfast cannoli', 'Italian granola', 'Breakfast ciabatta', 'Italian toast', 'Breakfast arancini', 'Italian smoothie'],
-                    Indian: ['Upma', 'Poha', 'Idli', 'Dosa', 'Paratha', 'Besan chilla', 'Rava dosa', 'Moong dal cheela', 'Vegetable uttapam', 'Sabudana khichdi', 'Oats idli', 'Ragi dosa', 'Vegetable poha', 'Bread upma', 'Rava upma', 'Vegetable dosa', 'Paneer paratha', 'Aloo paratha', 'Methi paratha', 'Mixed vegetable paratha', 'Oats chilla', 'Vermicelli upma', 'Suji halwa', 'Breakfast thali', 'Vegetable idli', 'Masala dosa', 'Set dosa', 'Pesarattu']
+                    American: ['Whole grain pancakes', 'Veggie omelet', 'Oatmeal', 'French toast', 'Breakfast burrito', 'Yogurt parfait', 'Smoothie bowl', 'Waffles', 'Quesadilla', 'Overnight oats', 'Scrambled tofu', 'Bagel with cream cheese', 'Breakfast sandwich', 'Granola with milk', 'Chia pudding', 'Avocado toast', 'Protein pancakes', 'Cottage cheese bowl', 'Breakfast tacos', 'Fruit and nut bowl', 'Veggie hash', 'Breakfast pizza', 'Quinoa bowl', 'Breakfast wrap', 'Shakshuka', 'Muffins', 'Cereal bowl', 'English muffin sandwich']
                 };
                 
                 const meatBreakfasts = {
-                    American: ['Eggs with chicken sausage', 'Fish omelet', 'Scrambled eggs with salmon', 'Chicken breakfast burrito', 'Egg sandwich with chicken', 'Breakfast bowl with chicken', 'Fish and eggs', 'Chicken breakfast wrap', 'Eggs with goat cheese', 'Chicken hash', 'Egg white omelet with chicken', 'Fish breakfast tacos', 'Chicken and waffles', 'Eggs Benedict with fish', 'Breakfast quesadilla with chicken', 'Chicken sausage scramble', 'Fish breakfast sandwich', 'Chicken frittata', 'Eggs with smoked fish', 'Chicken breakfast pizza', 'Fish and egg bowl', 'Chicken breakfast skillet', 'Egg muffins with chicken', 'Fish breakfast wrap', 'Chicken and eggs', 'Breakfast burrito with fish', 'Chicken shakshuka', 'Fish hash'],
+                    Indian: ['Egg dosa with chutney', 'Egg appam with curry', 'Chicken keema with idli', 'Fish curry with dosa', 'Egg bhurji with parotta', 'Chicken curry with appam', 'Fish moilee with puttu', 'Egg roast with bread', 'Chicken chettinad with idli', 'Fish fry with dosa', 'Egg masala with parotta', 'Chicken varuval with rice', 'Fish curry Kerala style', 'Egg podimas with bread', 'Chicken pepper fry with dosa', 'Fish mappas with appam', 'Egg curry with idli', 'Chicken roast with parotta', 'Fish pollichathu with rice', 'Egg omelette with bread', 'Chicken stew with appam', 'Fish molly with puttu', 'Egg burji with dosa', 'Chicken varutharacha curry', 'Fish fry with tapioca', 'Egg masala with idiyappam', 'Chicken peratal', 'Fish curry with rice'],
                     Mexican: ['Huevos with chorizo', 'Chicken breakfast tacos', 'Fish breakfast burrito', 'Eggs with chicken', 'Chicken chilaquiles', 'Fish tacos breakfast', 'Chicken and egg wrap', 'Fish breakfast bowl', 'Chicken quesadilla', 'Eggs with goat', 'Fish breakfast taco', 'Chicken scramble', 'Breakfast burrito with chicken', 'Fish huevos rancheros', 'Chicken breakfast enchiladas', 'Fish and eggs Mexican', 'Chicken breakfast tostada', 'Fish breakfast quesadilla', 'Chicken and bean burrito', 'Fish breakfast wrap', 'Chicken breakfast bowl', 'Fish chilaquiles', 'Chicken breakfast torta', 'Fish breakfast scramble', 'Chicken breakfast chimichanga', 'Fish breakfast sopes', 'Chicken breakfast flautas', 'Fish breakfast gorditas'],
                     Italian: ['Eggs with Italian sausage (chicken)', 'Fish frittata', 'Chicken omelet Italian', 'Eggs with smoked fish', 'Chicken breakfast wrap', 'Fish and eggs', 'Chicken frittata', 'Fish breakfast sandwich', 'Chicken breakfast focaccia', 'Eggs with chicken', 'Fish breakfast bowl', 'Chicken scramble Italian', 'Fish and egg wrap', 'Chicken breakfast piadina', 'Fish frittata', 'Chicken breakfast crostini', 'Fish Italian scramble', 'Chicken breakfast polenta', 'Fish breakfast focaccia', 'Chicken egg sandwich', 'Fish breakfast wrap Italian', 'Chicken breakfast pizza', 'Fish and eggs toast', 'Chicken breakfast bruschetta', 'Fish breakfast ciabatta', 'Chicken frittata special', 'Fish breakfast special', 'Chicken egg bowl'],
-                    Indian: ['Egg bhurji', 'Chicken keema with bread', 'Fish curry breakfast', 'Eggs with paratha', 'Chicken dosa', 'Fish breakfast bowl', 'Egg paratha', 'Chicken upma', 'Fish idli', 'Eggs with chicken curry', 'Chicken breakfast wrap', 'Fish breakfast special', 'Egg masala', 'Chicken poha', 'Fish breakfast thali', 'Eggs with goat curry', 'Chicken breakfast bowl', 'Fish upma', 'Egg dosa', 'Chicken paratha', 'Fish breakfast wrap', 'Eggs with chicken', 'Chicken keema paratha', 'Fish egg curry', 'Egg uttapam', 'Chicken breakfast dosa', 'Fish breakfast idli', 'Egg and chicken breakfast']
+                    American: ['Eggs with chicken sausage', 'Fish omelet', 'Scrambled eggs with salmon', 'Chicken breakfast burrito', 'Egg sandwich with chicken', 'Breakfast bowl with chicken', 'Fish and eggs', 'Chicken breakfast wrap', 'Eggs with goat cheese', 'Chicken hash', 'Egg white omelet with chicken', 'Fish breakfast tacos', 'Chicken and waffles', 'Eggs Benedict with fish', 'Breakfast quesadilla with chicken', 'Chicken sausage scramble', 'Fish breakfast sandwich', 'Chicken frittata', 'Eggs with smoked fish', 'Chicken breakfast pizza', 'Fish and egg bowl', 'Chicken breakfast skillet', 'Egg muffins with chicken', 'Fish breakfast wrap', 'Chicken and eggs', 'Breakfast burrito with fish', 'Chicken shakshuka', 'Fish hash']
                 };
                 
                 const breakfastList = diet === 'Vegetarian' ? vegBreakfasts[cuisine] : meatBreakfasts[cuisine];
@@ -1041,14 +1165,14 @@
                     American: ['Grilled cheese sandwich', 'Mac and cheese', 'Bean quesadilla', 'Veggie burger', 'PB&J sandwich', 'Pizza bagels', 'Vegetable fried rice', 'Bean nachos', 'Hummus wrap', 'Minestrone soup', 'Cheese tortellini', 'Veggie spring rolls', 'Black bean burger', 'Veggie pinwheels', 'Veggie pasta salad', 'Bean burrito bowl', 'Cheese ravioli', 'Veggie sub sandwich', 'Tofu stir-fry bowl', 'Vegetable soup', 'Cheese pizza', 'Bean and rice bowl', 'Veggie lo mein', 'Falafel wrap', 'Quinoa salad', 'Veggie tacos', 'Bean chili', 'Veggie sushi'],
                     Mexican: ['Cheese enchiladas', 'Bean burrito', 'Veggie fajitas', 'Cheese quesadilla', 'Bean tostadas', 'Veggie tacos', 'Mexican rice bowl', 'Bean gorditas', 'Veggie sopes', 'Cheese flautas', 'Bean and cheese burrito', 'Veggie torta', 'Mexican salad', 'Bean nachos', 'Veggie chimichanga', 'Cheese tacos', 'Bean taco salad', 'Veggie burrito bowl', 'Mexican bean soup', 'Cheese tamales', 'Veggie enchiladas', 'Bean quesadilla', 'Mexican veggie wrap', 'Cheese sopes', 'Bean and rice plate', 'Veggie tostada', 'Mexican bean bowl', 'Cheese gorditas'],
                     Italian: ['Cheese ravioli', 'Veggie pasta', 'Caprese salad', 'Minestrone soup', 'Pizza margherita', 'Veggie panini', 'Pasta primavera', 'Vegetable risotto', 'Eggplant parmesan', 'Italian bean soup', 'Veggie lasagna', 'Panzanella salad', 'Pasta e fagioli', 'Veggie pizza', 'Tortellini soup', 'Italian veggie wrap', 'Pasta salad', 'Veggie calzone', 'Italian quinoa bowl', 'Veggie piadina', 'Pasta with marinara', 'Italian veggie sandwich', 'Veggie gnocchi', 'Italian bean salad', 'Pasta pomodoro', 'Veggie focaccia sandwich', 'Italian rice bowl', 'Veggie arancini'],
-                    Indian: ['Dal with roti', 'Paneer curry', 'Vegetable biryani', 'Chole with rice', 'Palak paneer', 'Vegetable pulao', 'Dal makhani', 'Paneer tikka', 'Mixed vegetable curry', 'Rajma with rice', 'Vegetable korma', 'Aloo gobi', 'Paneer butter masala', 'Vegetable sambar', 'Baingan bharta', 'Dal tadka', 'Paneer bhurji', 'Vegetable jalfrezi', 'Chana masala', 'Vegetable kofta', 'Paneer do pyaza', 'Mixed dal', 'Vegetable curry', 'Paneer curry', 'Dal palak', 'Vegetable biryani special', 'Paneer tikka masala', 'Vegetable pulao special']
+                    Indian: ['Sambar rice with papad', 'Curd rice with pickle', 'Lemon rice with chips', 'Tamarind rice with raita', 'Vegetable biryani with raita', 'Bisi bele bath', 'Tomato rice with appalam', 'Coconut rice with curry', 'Puliyodarai with vadai', 'Avial with rice', 'Thoran with sambar rice', 'Kootu with rice and papad', 'Poriyal with curd rice', 'Rasam rice with fryums', 'Mor kuzhambu with rice', 'Vendakkai puli kulambu', 'Kathirikai gothsu with rice', 'Beans poriyal with sambar', 'Cabbage thoran with rice', 'Erissery with rice', 'Olan with rice', 'Pachadi with meals', 'Keerai masiyal with rice', 'Mixed vegetable sambar', 'Pulissery with rice', 'Moru curry with rice', 'Pumpkin erissery', 'Vegetable stew with appam']
                 };
                 
                 const meatLunches = {
                     American: ['Grilled chicken sandwich', 'Fish sticks with fries', 'Chicken quesadilla', 'Fish burger', 'Chicken wrap', 'Grilled fish sandwich', 'Chicken bowl', 'Fish tacos', 'Chicken salad', 'Fish and chips', 'Chicken pasta', 'Fish wrap', 'Chicken burrito', 'Grilled fish bowl', 'Chicken stir-fry', 'Fish sandwich', 'Chicken sub', 'Fish salad', 'Chicken rice bowl', 'Fish pasta', 'Chicken tacos', 'Grilled fish tacos', 'Chicken Caesar salad', 'Fish rice bowl', 'Chicken noodle soup', 'Fish stir-fry', 'Chicken and rice', 'Fish and vegetables'],
                     Mexican: ['Chicken enchiladas', 'Fish tacos', 'Chicken burrito', 'Fish burrito', 'Chicken fajitas', 'Fish fajitas', 'Chicken quesadilla', 'Fish quesadilla', 'Chicken tostadas', 'Fish tostadas', 'Chicken torta', 'Fish torta', 'Chicken bowl', 'Fish bowl', 'Chicken tacos', 'Grilled fish tacos', 'Chicken nachos', 'Fish nachos', 'Chicken enchilada bowl', 'Fish enchilada bowl', 'Chicken burrito bowl', 'Fish burrito bowl', 'Chicken fajita bowl', 'Fish fajita bowl', 'Chicken chimichanga', 'Fish chimichanga', 'Chicken sopes', 'Fish sopes'],
                     Italian: ['Chicken parmigiana', 'Grilled fish Italian', 'Chicken pasta', 'Fish pasta', 'Chicken panini', 'Fish panini', 'Chicken risotto', 'Fish risotto', 'Chicken cacciatore', 'Fish livornese', 'Chicken scaloppine', 'Fish piccata', 'Chicken lasagna', 'Fish lasagna', 'Chicken pizza', 'Fish pizza', 'Chicken calzone', 'Fish calzone', 'Chicken gnocchi', 'Fish gnocchi', 'Chicken arancini', 'Fish arancini', 'Chicken piadina', 'Fish piadina', 'Chicken focaccia', 'Fish focaccia', 'Chicken sandwich Italian', 'Fish sandwich Italian'],
-                    Indian: ['Chicken curry', 'Fish curry', 'Chicken biryani', 'Fish biryani', 'Chicken tikka masala', 'Fish tikka', 'Chicken korma', 'Fish korma', 'Chicken vindaloo', 'Fish vindaloo', 'Chicken tandoori', 'Fish tandoori', 'Chicken butter masala', 'Fish masala', 'Chicken jalfrezi', 'Fish jalfrezi', 'Chicken do pyaza', 'Fish do pyaza', 'Chicken kadai', 'Fish kadai', 'Chicken Chettinad', 'Fish Chettinad', 'Chicken rogan josh', 'Fish rogan josh', 'Chicken madras', 'Fish madras', 'Chicken keema', 'Fish fry']
+                    Indian: ['Chicken chettinad with rice', 'Fish curry with rice', 'Chicken biriyani', 'Fish fry with meals', 'Chicken varuval with rice', 'Fish moilee with rice', 'Chicken pepper fry with rice', 'Fish mappas with parotta', 'Chicken curry with rice', 'Fish pollichathu with rice', 'Goat curry with rice', 'Chicken roast with rice', 'Fish Kerala curry', 'Chicken masala with parotta', 'Fish fry Kerala style', 'Goat pepper fry with rice', 'Chicken varutharacha curry', 'Fish molly with rice', 'Chicken sukka with rice', 'Fish peera with rice', 'Goat chukka with rice', 'Chicken peratal with rice', 'Fish mulakittathu', 'Chicken ghee roast', 'Fish curry Tamil style', 'Goat masala with rice', 'Chicken Chettinad biryani', 'Fish fry with tapioca']
                 };
                 
                 const lunchList = diet === 'Vegetarian' ? vegLunches[cuisine] : meatLunches[cuisine];
@@ -1069,14 +1193,14 @@
                     American: ['Veggie pasta primavera', 'Cheese pizza', 'Bean burrito', 'Vegetable lasagna', 'Tofu stir-fry', 'Cheese enchiladas', 'Veggie pot pie', 'Stuffed peppers', 'Vegetable lo mein', 'Eggplant parmesan', 'Bean chili', 'Veggie fajitas', 'Mac and cheese casserole', 'Veggie sushi rolls', 'Quinoa stuffed squash', 'Bean and rice bowl', 'Veggie burger dinner', 'Portobello fajitas', 'Vegetable curry', 'Cheese ravioli', 'Veggie enchilada casserole', 'Black bean tacos', 'Vegetable pad thai', 'Tofu teriyaki', 'Veggie shepherd\'s pie', 'Bean and vegetable stew', 'Veggie risotto', 'Cauliflower steaks'],
                     Mexican: ['Veggie enchiladas', 'Bean and cheese burrito', 'Veggie fajitas', 'Cheese quesadilla dinner', 'Bean tostadas', 'Veggie tacos supreme', 'Mexican bean bowl', 'Cheese chile relleno', 'Veggie burrito bowl', 'Bean and rice plate', 'Veggie tamales', 'Cheese enchilada casserole', 'Bean fajita bowl', 'Veggie chimichanga', 'Mexican veggie pizza', 'Bean and cheese nachos', 'Veggie taco salad', 'Cheese sopes dinner', 'Bean gorditas dinner', 'Veggie tortilla casserole', 'Mexican veggie lasagna', 'Bean and vegetable stew', 'Veggie enchilada stack', 'Cheese stuffed peppers Mexican', 'Bean and rice casserole', 'Veggie Mexican pasta', 'Cheese taco bake', 'Bean and veggie plate'],
                     Italian: ['Vegetable lasagna', 'Eggplant parmesan', 'Pasta primavera', 'Cheese ravioli dinner', 'Veggie pizza dinner', 'Portobello steaks', 'Vegetable risotto', 'Pasta pomodoro', 'Veggie calzone dinner', 'Italian veggie bake', 'Pasta e fagioli', 'Veggie gnocchi', 'Italian bean casserole', 'Pasta with vegetables', 'Veggie parmigiana', 'Italian stuffed peppers', 'Pasta alla norma', 'Veggie arancini dinner', 'Italian veggie stew', 'Pasta with marinara', 'Veggie cannelloni', 'Italian rice bowl dinner', 'Pasta aglio e olio', 'Veggie manicotti', 'Italian vegetable bake', 'Pasta with pesto', 'Veggie Italian casserole', 'Pasta alla puttanesca'],
-                    Indian: ['Paneer tikka masala', 'Dal makhani', 'Vegetable biryani', 'Palak paneer', 'Chole masala', 'Mixed vegetable curry', 'Paneer butter masala', 'Dal tadka', 'Vegetable korma', 'Baingan bharta', 'Aloo gobi', 'Paneer bhurji', 'Vegetable jalfrezi', 'Dal palak', 'Paneer do pyaza', 'Vegetable kofta', 'Chana masala', 'Paneer curry', 'Mixed dal dinner', 'Vegetable masala', 'Paneer tikka', 'Dal fry', 'Vegetable biryani special', 'Paneer kadai', 'Mixed vegetable dinner', 'Dal special', 'Paneer masala', 'Vegetable curry special']
+                    Indian: ['Sambar with rice and poriyal', 'Rasam with rice and fry', 'Vegetable kurma with dosa', 'Avial with rice and papad', 'Kootu with chapati', 'Thoran with rice and curry', 'Pulissery with rice', 'Moru curry with rice', 'Olan with rice', 'Erissery with rice', 'Pachadi with meals', 'Vegetable stew with appam', 'Keerai masiyal with rice', 'Puli kulambu with rice', 'More kulambu with rice', 'Vendakkai sambar', 'Kathirikai curry with rice', 'Beans poriyal meals', 'Mixed vegetable curry Tamil style', 'Ennai kathirikai', 'Vazhakai curry with rice', 'Murungakkai sambar', 'Paruppu usili with rice', 'Cabbage poriyal with dal', 'Carrot beans poriyal', 'Potato roast with sambar', 'Beetroot poriyal with rice', 'Pumpkin curry with rice']
                 };
                 
                 const meatDinners = {
                     American: ['Grilled chicken breast', 'Baked fish fillet', 'Chicken stir-fry', 'Grilled fish tacos', 'Chicken and vegetables', 'Fish and chips healthy', 'Chicken fajitas', 'Grilled fish dinner', 'Chicken pasta', 'Fish with rice', 'Chicken teriyaki', 'Fish piccata', 'Chicken marsala', 'Grilled fish with vegetables', 'Chicken and rice', 'Fish stir-fry', 'Chicken burrito bowl', 'Grilled fish bowl', 'Chicken pot pie', 'Fish dinner special', 'Chicken quesadilla dinner', 'Fish tacos dinner', 'Chicken casserole', 'Fish casserole', 'Chicken and quinoa', 'Fish and quinoa', 'Chicken stew', 'Fish stew'],
                     Mexican: ['Chicken fajitas', 'Fish tacos', 'Chicken enchiladas', 'Fish enchiladas', 'Chicken burrito', 'Fish burrito', 'Chicken quesadilla dinner', 'Fish quesadilla dinner', 'Chicken tostadas', 'Fish tostadas', 'Chicken bowl', 'Fish bowl', 'Chicken tacos', 'Fish tacos special', 'Chicken burrito bowl', 'Fish burrito bowl', 'Chicken enchilada casserole', 'Fish enchilada casserole', 'Chicken fajita bowl', 'Fish fajita bowl', 'Chicken chile relleno', 'Fish chile relleno', 'Chicken tamales', 'Fish tamales', 'Chicken Mexican rice', 'Fish Mexican rice', 'Chicken tortilla casserole', 'Fish tortilla casserole'],
                     Italian: ['Chicken parmigiana', 'Grilled fish Italian', 'Chicken cacciatore', 'Fish livornese', 'Chicken marsala', 'Fish piccata', 'Chicken scaloppine', 'Fish scampi', 'Chicken lasagna', 'Fish lasagna', 'Chicken risotto', 'Fish risotto', 'Chicken pasta', 'Fish pasta', 'Chicken saltimbocca', 'Fish alla griglia', 'Chicken osso buco style', 'Fish Mediterranean', 'Chicken piccata', 'Fish parmigiana', 'Chicken Milanese', 'Fish Milanese', 'Chicken Florentine', 'Fish Florentine', 'Chicken Vesuvio', 'Fish Vesuvio', 'Chicken arrabiata', 'Fish arrabiata'],
-                    Indian: ['Chicken tikka masala', 'Fish curry', 'Chicken biryani', 'Fish biryani', 'Chicken tandoori', 'Fish tandoori', 'Chicken korma', 'Fish korma', 'Chicken vindaloo', 'Fish vindaloo', 'Chicken butter masala', 'Fish masala', 'Chicken curry', 'Fish curry special', 'Chicken jalfrezi', 'Fish jalfrezi', 'Chicken rogan josh', 'Fish rogan josh', 'Chicken kadai', 'Fish kadai', 'Chicken Chettinad', 'Fish Chettinad', 'Chicken madras', 'Fish madras', 'Chicken do pyaza', 'Fish do pyaza', 'Chicken saag', 'Fish saag']
+                    Indian: ['Chicken chettinad with rice and poriyal', 'Fish curry with rice and thoran', 'Chicken biriyani with raita', 'Fish fry with sambar rice', 'Chicken varuval with rasam rice', 'Fish moilee with appam', 'Chicken pepper fry with rice', 'Fish mappas with parotta', 'Goat curry with rice', 'Chicken roast with rice and poriyal', 'Fish pollichathu with rice', 'Chicken curry Tamil Nadu style', 'Fish Kerala curry with rice', 'Goat pepper fry with parotta', 'Chicken masala with rice', 'Fish fry Kerala style with rice', 'Chicken varutharacha curry', 'Fish molly with puttu', 'Goat chukka with rice', 'Chicken sukka with rice', 'Fish peera with rice', 'Chicken peratal with rice', 'Fish mulakittathu with rice', 'Goat masala with rice', 'Chicken ghee roast with neer dosa', 'Fish curry with tapioca', 'Chicken Chettinad biriyani', 'Fish fry with lemon rice']
                 };
                 
                 const dinnerList = diet === 'Vegetarian' ? vegDinners[cuisine] : meatDinners[cuisine];
@@ -1143,7 +1267,7 @@
         }
 
         function displayMealPlan(mealData) {
-            const cuisineNames = { american: 'American', mexican: 'Mexican', italian: 'Italian', indian: 'Indian' };
+            const cuisineNames = { indian: 'Indian', mexican: 'Mexican', italian: 'Italian', american: 'American' };
             const ageGroupNames = { 
                 children: 'Children (4-12 years)', 
                 women: 'Women (30-45 years)', 
@@ -1392,7 +1516,7 @@
         function downloadCalendar() {
             // Create printable calendar view
             const printWindow = window.open('', '_blank');
-            const cuisineNames = { american: 'American', mexican: 'Mexican', italian: 'Italian', indian: 'Indian' };
+            const cuisineNames = { indian: 'Indian', mexican: 'Mexican', italian: 'Italian', american: 'American' };
             const ageGroupNames = { 
                 children: 'Children (4-12 years)', 
                 women: 'Women (30-45 years)', 
@@ -1552,10 +1676,10 @@
         
         // Recipe Suggester Functions
         let customRecipes = {
-            american: { vegetarian: { breakfast: [], lunch: [], dinner: [], snacks: [] }, meat: { breakfast: [], lunch: [], dinner: [], snacks: [] } },
+            indian: { vegetarian: { breakfast: [], lunch: [], dinner: [], snacks: [] }, meat: { breakfast: [], lunch: [], dinner: [], snacks: [] } },
             mexican: { vegetarian: { breakfast: [], lunch: [], dinner: [], snacks: [] }, meat: { breakfast: [], lunch: [], dinner: [], snacks: [] } },
             italian: { vegetarian: { breakfast: [], lunch: [], dinner: [], snacks: [] }, meat: { breakfast: [], lunch: [], dinner: [], snacks: [] } },
-            indian: { vegetarian: { breakfast: [], lunch: [], dinner: [], snacks: [] }, meat: { breakfast: [], lunch: [], dinner: [], snacks: [] } }
+            american: { vegetarian: { breakfast: [], lunch: [], dinner: [], snacks: [] }, meat: { breakfast: [], lunch: [], dinner: [], snacks: [] } }
         };
         
         function showRecipeSuggester() {
@@ -1591,9 +1715,9 @@
             
             // Base ingredients by cuisine
             const cuisineIngredients = {
-                american: {
-                    vegetarian: ['avocado', 'eggs', 'cheese', 'quinoa', 'beans', 'sweet potato', 'kale', 'tofu'],
-                    meat: ['chicken breast', 'salmon', 'turkey', 'tilapia', 'chicken thighs', 'cod', 'chicken sausage']
+                indian: {
+                    vegetarian: ['sambar', 'coconut', 'curry leaves', 'tamarind', 'drumstick', 'snake gourd', 'ash gourd', 'dal', 'rice', 'yogurt', 'mustard seeds', 'urad dal'],
+                    meat: ['chicken', 'fish', 'goat', 'coconut', 'curry leaves', 'tamarind', 'pepper', 'coriander']
                 },
                 mexican: {
                     vegetarian: ['black beans', 'corn', 'peppers', 'avocado', 'cheese', 'tortillas', 'cilantro', 'lime'],
@@ -1603,9 +1727,9 @@
                     vegetarian: ['mozzarella', 'tomatoes', 'basil', 'pasta', 'eggplant', 'zucchini', 'ricotta', 'spinach'],
                     meat: ['chicken', 'fish', 'Italian sausage (chicken)', 'anchovies']
                 },
-                indian: {
-                    vegetarian: ['lentils', 'chickpeas', 'paneer', 'curry leaves', 'spinach', 'cauliflower', 'potatoes', 'yogurt'],
-                    meat: ['chicken', 'fish', 'goat', 'lamb']
+                american: {
+                    vegetarian: ['avocado', 'eggs', 'cheese', 'quinoa', 'beans', 'sweet potato', 'kale', 'tofu'],
+                    meat: ['chicken breast', 'salmon', 'turkey', 'tilapia', 'chicken thighs', 'cod', 'chicken sausage']
                 }
             };
             
@@ -1646,7 +1770,7 @@
                 } else if (cuisine === 'italian') {
                     recipeName += ' with herbs and olive oil';
                 } else if (cuisine === 'indian') {
-                    recipeName += ' with spices and curry';
+                    recipeName += ' with curry leaves and coconut';
                 }
                 
                 // Incorporate user preferences if provided
@@ -1737,7 +1861,204 @@
             } catch (e) {
                 console.log('Could not load from localStorage');
             }
+            
+            // Set default start date to today
+            const today = new Date().toISOString().split('T')[0];
+            if (document.getElementById('gcalStartDate')) {
+                document.getElementById('gcalStartDate').value = today;
+            }
         });
+        
+        // Google Calendar Export Functions
+        function exportToGoogleCalendar() {
+            document.getElementById('googleCalendarModal').style.display = 'block';
+            document.getElementById('gcalLinks').style.display = 'none';
+            
+            // Set default start date to today if not set
+            const dateInput = document.getElementById('gcalStartDate');
+            if (!dateInput.value) {
+                dateInput.value = new Date().toISOString().split('T')[0];
+            }
+        }
+        
+        function closeGoogleCalendarModal() {
+            document.getElementById('googleCalendarModal').style.display = 'none';
+        }
+        
+        function generateGoogleCalendarLinks() {
+            const startDateStr = document.getElementById('gcalStartDate').value;
+            if (!startDateStr) {
+                alert('Please select a start date');
+                return;
+            }
+            
+            const startDate = new Date(startDateStr + 'T00:00:00');
+            const breakfastTime = document.getElementById('breakfastTime').value;
+            const lunchTime = document.getElementById('lunchTime').value;
+            const dinnerTime = document.getElementById('dinnerTime').value;
+            const snackTime = document.getElementById('snackTime').value;
+            const duration = parseInt(document.getElementById('eventDuration').value);
+            
+            let buttonsHTML = '';
+            
+            state.mealPlan.plan.forEach((day, index) => {
+                const dayDate = new Date(startDate);
+                dayDate.setDate(startDate.getDate() + index);
+                
+                // Create events for all meals
+                const meals = [
+                    { type: 'Breakfast', time: breakfastTime, meal: day.breakfast, icon: '🌅' },
+                    { type: 'Lunch', time: lunchTime, meal: day.lunch, icon: '🍽️' },
+                    { type: 'Dinner', time: dinnerTime, meal: day.dinner, icon: '🌙' },
+                    { type: 'Snack', time: snackTime, meal: day.snack, icon: '🥤' }
+                ];
+                
+                // Create a single Google Calendar URL that adds all 4 meals for the day
+                const allMealsURL = createGoogleCalendarURL(dayDate, meals, duration);
+                
+                const dateStr = dayDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                
+                buttonsHTML += `
+                    <button class="gcal-day-btn" onclick="window.open('${allMealsURL}', '_blank')">
+                        <div class="gcal-day-title">📅 Day ${day.day} - ${dateStr}</div>
+                        <div class="gcal-day-meals">
+                            🌅 ${truncateText(day.breakfast.name, 30)}<br>
+                            🍽️ ${truncateText(day.lunch.name, 30)}<br>
+                            🌙 ${truncateText(day.dinner.name, 30)}<br>
+                            🥤 ${truncateText(day.snack.name, 30)}
+                        </div>
+                    </button>
+                `;
+            });
+            
+            document.getElementById('gcalLinkButtons').innerHTML = buttonsHTML;
+            document.getElementById('gcalLinks').style.display = 'block';
+        }
+        
+        function createGoogleCalendarURL(date, meals, durationMinutes) {
+            // Google Calendar only allows one event per URL, so we'll create URL for first meal
+            // and include all meals in the description
+            const firstMeal = meals[0];
+            const [hours, minutes] = firstMeal.time.split(':');
+            
+            const startDateTime = new Date(date);
+            startDateTime.setHours(parseInt(hours), parseInt(minutes), 0);
+            
+            const endDateTime = new Date(startDateTime);
+            endDateTime.setMinutes(endDateTime.getMinutes() + durationMinutes);
+            
+            // Format dates for Google Calendar (YYYYMMDDTHHmmss)
+            const formatGCalDate = (d) => {
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                const hour = String(d.getHours()).padStart(2, '0');
+                const minute = String(d.getMinutes()).padStart(2, '0');
+                return `${year}${month}${day}T${hour}${minute}00`;
+            };
+            
+            // Build description with all meals
+            let description = 'Daily Meal Plan:\\n\\n';
+            meals.forEach(m => {
+                description += `${m.icon} ${m.type} (${m.time}):\\n`;
+                description += `${m.meal.name}\\n`;
+                description += `${m.meal.calories} kcal • ${m.meal.protein}g protein\\n`;
+                description += `Source: ${m.meal.source}\\n\\n`;
+            });
+            
+            const cuisineNames = { indian: 'Indian', mexican: 'Mexican', italian: 'Italian', american: 'American' };
+            const title = `🥗 Meal Plan - ${cuisineNames[state.cuisine]} Day`;
+            
+            const params = new URLSearchParams({
+                action: 'TEMPLATE',
+                text: title,
+                dates: `${formatGCalDate(startDateTime)}/${formatGCalDate(endDateTime)}`,
+                details: description,
+                location: 'Home Kitchen'
+            });
+            
+            return `https://calendar.google.com/calendar/render?${params.toString()}`;
+        }
+        
+        function createICSFile() {
+            // Alternative: Create ICS file for download
+            const startDateStr = document.getElementById('gcalStartDate').value;
+            const startDate = new Date(startDateStr + 'T00:00:00');
+            const breakfastTime = document.getElementById('breakfastTime').value;
+            const lunchTime = document.getElementById('lunchTime').value;
+            const dinnerTime = document.getElementById('dinnerTime').value;
+            const snackTime = document.getElementById('snackTime').value;
+            const duration = parseInt(document.getElementById('eventDuration').value);
+            
+            let icsContent = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//AI Meal Planner//EN\n';
+            
+            state.mealPlan.plan.forEach((day, index) => {
+                const dayDate = new Date(startDate);
+                dayDate.setDate(startDate.getDate() + index);
+                
+                const meals = [
+                    { type: 'Breakfast', time: breakfastTime, meal: day.breakfast, icon: '🌅' },
+                    { type: 'Lunch', time: lunchTime, meal: day.lunch, icon: '🍽️' },
+                    { type: 'Dinner', time: dinnerTime, meal: day.dinner, icon: '🌙' },
+                    { type: 'Snack', time: snackTime, meal: day.snack, icon: '🥤' }
+                ];
+                
+                meals.forEach(m => {
+                    const [hours, minutes] = m.time.split(':');
+                    const startDateTime = new Date(dayDate);
+                    startDateTime.setHours(parseInt(hours), parseInt(minutes), 0);
+                    
+                    const endDateTime = new Date(startDateTime);
+                    endDateTime.setMinutes(endDateTime.getMinutes() + duration);
+                    
+                    const formatICSDate = (d) => {
+                        const year = d.getFullYear();
+                        const month = String(d.getMonth() + 1).padStart(2, '0');
+                        const day = String(d.getDate()).padStart(2, '0');
+                        const hour = String(d.getHours()).padStart(2, '0');
+                        const minute = String(d.getMinutes()).padStart(2, '0');
+                        return `${year}${month}${day}T${hour}${minute}00`;
+                    };
+                    
+                    icsContent += 'BEGIN:VEVENT\n';
+                    icsContent += `DTSTART:${formatICSDate(startDateTime)}\n`;
+                    icsContent += `DTEND:${formatICSDate(endDateTime)}\n`;
+                    icsContent += `SUMMARY:${m.icon} ${m.type} - ${m.meal.name}\n`;
+                    icsContent += `DESCRIPTION:${m.meal.calories} kcal • ${m.meal.protein}g protein\\nSource: ${m.meal.source}\n`;
+                    icsContent += `LOCATION:Home Kitchen\n`;
+                    icsContent += 'END:VEVENT\n';
+                });
+            });
+            
+            icsContent += 'END:VCALENDAR';
+            
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `meal-plan-${startDateStr}.ics`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+        
+        // Update window.onclick to handle new modal
+        const originalOnClick = window.onclick;
+        window.onclick = function(event) {
+            const swapModal = document.getElementById('swapModal');
+            if (event.target === swapModal) {
+                closeSwapModal();
+            }
+            const recipeModal = document.getElementById('recipeSuggesterModal');
+            if (event.target === recipeModal) {
+                closeRecipeSuggester();
+            }
+            const gcalModal = document.getElementById('googleCalendarModal');
+            if (event.target === gcalModal) {
+                closeGoogleCalendarModal();
+            }
+        }
     </script>
 </body>
 </html>
