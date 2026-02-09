@@ -179,38 +179,78 @@
         }
         
         .nutrition-info {
-            background: #fef3c7;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
             border: 2px solid #fbbf24;
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 8px;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-top: 12px;
             font-size: 13px;
+        }
+        
+        .nutrition-info strong {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #92400e;
+            font-weight: 700;
+            text-align: center;
         }
         
         .nutrition-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 8px;
-            margin-top: 8px;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
         }
         
         .nutrition-item {
             background: white;
-            padding: 6px;
-            border-radius: 6px;
+            padding: 12px 8px;
+            border-radius: 8px;
             text-align: center;
+            border: 1px solid #fbbf24;
+            box-shadow: 0 2px 4px rgba(251, 191, 36, 0.1);
+            transition: all 0.2s;
+        }
+        
+        .nutrition-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(251, 191, 36, 0.2);
         }
         
         .nutrition-label {
-            font-size: 11px;
+            font-size: 10px;
             color: #92400e;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
         }
         
         .nutrition-value {
-            font-size: 13px;
+            font-size: 18px;
             color: #78350f;
             font-weight: bold;
+            line-height: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .nutrition-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+            
+            .meal-image-container {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .meal-content-flex {
+                gap: 12px;
+            }
+            
+            .meal-description {
+                font-size: 15px;
+            }
         }
         
         .age-group-card {
@@ -310,12 +350,56 @@
             padding: 20px; border-radius: 16px; border: 1px solid var(--border); transition: all 0.2s;
         }
         .meal-item:hover { border-color: var(--primary-light); transform: translateX(4px); }
+        
         .meal-label {
             display: flex; align-items: center; gap: 10px; font-weight: 600;
             color: var(--text-primary); margin-bottom: 10px; font-size: 16px;
         }
         .meal-icon { font-size: 20px; }
-        .meal-description { color: var(--text-secondary); margin-left: 30px; line-height: 1.6; font-size: 15px; }
+        
+        .meal-content-flex {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            margin-top: 8px;
+        }
+        
+        .meal-image-container {
+            flex-shrink: 0;
+            width: 120px;
+            height: 120px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .meal-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .meal-image:hover {
+            transform: scale(1.05);
+        }
+        
+        .meal-text-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .meal-description { 
+            color: var(--text-primary); 
+            margin-left: 0;
+            line-height: 1.6; 
+            font-size: 17px;
+            font-weight: 600;
+            font-family: 'Fraunces', serif;
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
         .meal-source { font-size: 12px; color: var(--primary); margin-left: 30px; margin-top: 6px; font-style: italic; }
         .shopping-list {
             background: white; padding: 32px; border-radius: 20px; border: 2px solid var(--border); margin-top: 24px;
@@ -986,6 +1070,23 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label class="form-label">Health Considerations (Optional):</label>
+                        <select id="recipeHealth" class="form-select">
+                            <option value="">None (Standard recipes)</option>
+                            <option value="low-sodium">🧂 Low Sodium</option>
+                            <option value="low-calorie">⚖️ Low Calorie</option>
+                            <option value="high-protein">💪 High Protein</option>
+                            <option value="gut-friendly">🦠 Gut Friendly</option>
+                            <option value="eczema">🩹 Eczema-Friendly</option>
+                            <option value="diabetes">🩸 Diabetes-Friendly</option>
+                            <option value="heart-health">❤️ Heart Healthy</option>
+                            <option value="gluten-free">🌾 Gluten Free</option>
+                        </select>
+                        <p style="font-size: 12px; color: #64748b; margin-top: 4px;">
+                            Select a health consideration to get tailored recipe suggestions
+                        </p>
+                    </div>
+                    <div class="form-group">
                         <label class="form-label">What ingredients or flavors do you enjoy?</label>
                         <textarea id="recipePreferences" class="form-textarea" placeholder="e.g., avocado, spicy, mediterranean flavors, etc."></textarea>
                     </div>
@@ -1077,6 +1178,56 @@
     </div>
 
     <script>
+        // Generate meal image URL using a placeholder service
+        function getMealImage(mealName, cuisine) {
+            // Create a deterministic seed from meal name for consistent images
+            const seed = mealName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            
+            // Use Lorem Picsum with seed for consistent, attractive food-like images
+            // Alternative: Use a simple gradient placeholder with meal emoji
+            const imageId = (seed % 100) + 100; // IDs between 100-199
+            
+            // Return a placeholder image URL
+            return `https://picsum.photos/seed/${seed}/300/300`;
+        }
+        
+        // Alternative: Generate a colored gradient placeholder with emoji
+        function getMealImagePlaceholder(mealName, cuisine, mealType) {
+            const mealEmojis = {
+                breakfast: '🌅',
+                lunch: '🍽️',
+                dinner: '🌙',
+                snack: '🥤'
+            };
+            
+            const cuisineColors = {
+                indian: ['#FF6B35', '#F7931E'],
+                mexican: ['#C1666B', '#D4A5A5'],
+                italian: ['#48A9A6', '#4281A4'],
+                american: ['#E63946', '#F77F00']
+            };
+            
+            const colors = cuisineColors[cuisine] || ['#059669', '#10b981'];
+            const emoji = mealEmojis[mealType] || '🍴';
+            
+            // Create SVG data URL with gradient and emoji
+            const svg = `
+                <svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:${colors[0]};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${colors[1]};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="300" height="300" fill="url(#grad)"/>
+                    <text x="50%" y="50%" font-size="120" text-anchor="middle" dy=".35em">${emoji}</text>
+                    <text x="50%" y="75%" font-size="16" text-anchor="middle" fill="white" font-weight="bold" opacity="0.9">${mealName.substring(0, 25)}</text>
+                </svg>
+            `;
+            
+            return 'data:image/svg+xml;base64,' + btoa(svg);
+        }
+        
         // Vitamin & Mineral Database - Comprehensive nutrition tracking
         function generateNutritionData(mealType, calories, cuisine, diet) {
             // Base vitamin values (mcg or mg) adjusted by meal type and cuisine
@@ -2216,46 +2367,56 @@
                                         ${day.breakfast.calories} kcal
                                     </span>
                                 </div>
-                                <div class="meal-description">${day.breakfast.name}</div>
-                                <div class="meal-source">Source: ${day.breakfast.source}</div>
-                                ${day.breakfast.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.breakfast.healthNotes}</div>` : ''}
-                                ${day.breakfast.vitamins ? `
-                                    <div class="nutrition-info">
-                                        <strong style="color: #92400e;">🍊 Key Nutrients (% Daily Value):</strong>
-                                        <div class="nutrition-grid">
-                                            <div class="nutrition-item">
-                                                <div class="nutrition-label">Protein</div>
-                                                <div class="nutrition-value">${day.breakfast.protein}g</div>
-                                            </div>
-                                            ${day.breakfast.vitamins.C ? `
-                                            <div class="nutrition-item">
-                                                <div class="nutrition-label">Vit C</div>
-                                                <div class="nutrition-value">${day.breakfast.vitamins.C.dv}%</div>
-                                            </div>` : ''}
-                                            ${day.breakfast.vitamins.B12 ? `
-                                            <div class="nutrition-item">
-                                                <div class="nutrition-label">B12</div>
-                                                <div class="nutrition-value">${day.breakfast.vitamins.B12.dv}%</div>
-                                            </div>` : ''}
-                                            ${day.breakfast.minerals.Iron ? `
-                                            <div class="nutrition-item">
-                                                <div class="nutrition-label">Iron</div>
-                                                <div class="nutrition-value">${day.breakfast.minerals.Iron.dv}%</div>
-                                            </div>` : ''}
-                                            ${day.breakfast.minerals.Calcium ? `
-                                            <div class="nutrition-item">
-                                                <div class="nutrition-label">Calcium</div>
-                                                <div class="nutrition-value">${day.breakfast.minerals.Calcium.dv}%</div>
-                                            </div>` : ''}
-                                            ${day.breakfast.vitamins.A ? `
-                                            <div class="nutrition-item">
-                                                <div class="nutrition-label">Vit A</div>
-                                                <div class="nutrition-value">${day.breakfast.vitamins.A.dv}%</div>
-                                            </div>` : ''}
-                                        </div>
+                                <div class="meal-content-flex">
+                                    <div class="meal-image-container">
+                                        <img src="${getMealImagePlaceholder(day.breakfast.name, state.cuisine, 'breakfast')}" 
+                                             alt="${day.breakfast.name}" 
+                                             class="meal-image"
+                                             loading="lazy">
                                     </div>
+                                    <div class="meal-text-content">
+                                        <div class="meal-description">${day.breakfast.name}</div>
+                                        <div class="meal-source">Source: ${day.breakfast.source}</div>
+                                        ${day.breakfast.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.breakfast.healthNotes}</div>` : ''}
+                                    </div>
+                                </div>
+                                ${day.breakfast.vitamins ? `
+                                <div class="nutrition-info">
+                                    <strong>🍊 Key Nutrients</strong>
+                                    <div class="nutrition-grid">
+                                        <div class="nutrition-item">
+                                            <div class="nutrition-label">Protein</div>
+                                            <div class="nutrition-value">${day.breakfast.protein}g</div>
+                                        </div>
+                                        ${day.breakfast.vitamins.C ? `
+                                        <div class="nutrition-item">
+                                            <div class="nutrition-label">Vit C</div>
+                                            <div class="nutrition-value">${day.breakfast.vitamins.C.dv}%</div>
+                                        </div>` : ''}
+                                        ${day.breakfast.vitamins.B12 ? `
+                                        <div class="nutrition-item">
+                                            <div class="nutrition-label">B12</div>
+                                            <div class="nutrition-value">${day.breakfast.vitamins.B12.dv}%</div>
+                                        </div>` : ''}
+                                        ${day.breakfast.minerals.Iron ? `
+                                        <div class="nutrition-item">
+                                            <div class="nutrition-label">Iron</div>
+                                            <div class="nutrition-value">${day.breakfast.minerals.Iron.dv}%</div>
+                                        </div>` : ''}
+                                        ${day.breakfast.minerals.Calcium ? `
+                                        <div class="nutrition-item">
+                                            <div class="nutrition-label">Calcium</div>
+                                            <div class="nutrition-value">${day.breakfast.minerals.Calcium.dv}%</div>
+                                        </div>` : ''}
+                                        ${day.breakfast.vitamins.A ? `
+                                        <div class="nutrition-item">
+                                            <div class="nutrition-label">Vit A</div>
+                                            <div class="nutrition-value">${day.breakfast.vitamins.A.dv}%</div>
+                                        </div>` : ''}
+                                    </div>
+                                </div>
                                 ` : ''}
-                                <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'breakfast')">🔄 Swap Meal</button>
+                                <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'breakfast')" style="margin-top: 12px;">🔄 Swap Meal</button>
                             </div>
                             <div class="meal-item">
                                 <div class="meal-label">
@@ -2264,26 +2425,36 @@
                                         ${day.lunch.calories} kcal
                                     </span>
                                 </div>
-                                <div class="meal-description">${day.lunch.name}</div>
-                                <div class="meal-source">Source: ${day.lunch.source}</div>
-                                ${day.lunch.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.lunch.healthNotes}</div>` : ''}
-                                ${day.lunch.vitamins ? `
-                                    <div class="nutrition-info">
-                                        <strong style="color: #92400e;">🍊 Key Nutrients (% Daily Value):</strong>
-                                        <div class="nutrition-grid">
-                                            <div class="nutrition-item">
-                                                <div class="nutrition-label">Protein</div>
-                                                <div class="nutrition-value">${day.lunch.protein}g</div>
-                                            </div>
-                                            ${day.lunch.vitamins.C ? `<div class="nutrition-item"><div class="nutrition-label">Vit C</div><div class="nutrition-value">${day.lunch.vitamins.C.dv}%</div></div>` : ''}
-                                            ${day.lunch.vitamins.B12 ? `<div class="nutrition-item"><div class="nutrition-label">B12</div><div class="nutrition-value">${day.lunch.vitamins.B12.dv}%</div></div>` : ''}
-                                            ${day.lunch.minerals.Iron ? `<div class="nutrition-item"><div class="nutrition-label">Iron</div><div class="nutrition-value">${day.lunch.minerals.Iron.dv}%</div></div>` : ''}
-                                            ${day.lunch.minerals.Calcium ? `<div class="nutrition-item"><div class="nutrition-label">Calcium</div><div class="nutrition-value">${day.lunch.minerals.Calcium.dv}%</div></div>` : ''}
-                                            ${day.lunch.vitamins.A ? `<div class="nutrition-item"><div class="nutrition-label">Vit A</div><div class="nutrition-value">${day.lunch.vitamins.A.dv}%</div></div>` : ''}
-                                        </div>
+                                <div class="meal-content-flex">
+                                    <div class="meal-image-container">
+                                        <img src="${getMealImagePlaceholder(day.lunch.name, state.cuisine, 'lunch')}" 
+                                             alt="${day.lunch.name}" 
+                                             class="meal-image"
+                                             loading="lazy">
                                     </div>
+                                    <div class="meal-text-content">
+                                        <div class="meal-description">${day.lunch.name}</div>
+                                        <div class="meal-source">Source: ${day.lunch.source}</div>
+                                        ${day.lunch.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.lunch.healthNotes}</div>` : ''}
+                                    </div>
+                                </div>
+                                ${day.lunch.vitamins ? `
+                                <div class="nutrition-info">
+                                    <strong>🍊 Key Nutrients</strong>
+                                    <div class="nutrition-grid">
+                                        <div class="nutrition-item">
+                                            <div class="nutrition-label">Protein</div>
+                                            <div class="nutrition-value">${day.lunch.protein}g</div>
+                                        </div>
+                                        ${day.lunch.vitamins.C ? `<div class="nutrition-item"><div class="nutrition-label">Vit C</div><div class="nutrition-value">${day.lunch.vitamins.C.dv}%</div></div>` : ''}
+                                        ${day.lunch.vitamins.B12 ? `<div class="nutrition-item"><div class="nutrition-label">B12</div><div class="nutrition-value">${day.lunch.vitamins.B12.dv}%</div></div>` : ''}
+                                        ${day.lunch.minerals.Iron ? `<div class="nutrition-item"><div class="nutrition-label">Iron</div><div class="nutrition-value">${day.lunch.minerals.Iron.dv}%</div></div>` : ''}
+                                        ${day.lunch.minerals.Calcium ? `<div class="nutrition-item"><div class="nutrition-label">Calcium</div><div class="nutrition-value">${day.lunch.minerals.Calcium.dv}%</div></div>` : ''}
+                                        ${day.lunch.vitamins.A ? `<div class="nutrition-item"><div class="nutrition-label">Vit A</div><div class="nutrition-value">${day.lunch.vitamins.A.dv}%</div></div>` : ''}
+                                    </div>
+                                </div>
                                 ` : ''}
-                                <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'lunch')">🔄 Swap Meal</button>
+                                <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'lunch')" style="margin-top: 12px;">🔄 Swap Meal</button>
                             </div>
                             <div class="meal-item">
                                 <div class="meal-label">
@@ -2292,26 +2463,36 @@
                                         ${day.dinner.calories} kcal
                                     </span>
                                 </div>
-                                <div class="meal-description">${day.dinner.name}</div>
-                                <div class="meal-source">Source: ${day.dinner.source}</div>
-                                ${day.dinner.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.dinner.healthNotes}</div>` : ''}
-                                ${day.dinner.vitamins ? `
-                                    <div class="nutrition-info">
-                                        <strong style="color: #92400e;">🍊 Key Nutrients (% Daily Value):</strong>
-                                        <div class="nutrition-grid">
-                                            <div class="nutrition-item">
-                                                <div class="nutrition-label">Protein</div>
-                                                <div class="nutrition-value">${day.dinner.protein}g</div>
-                                            </div>
-                                            ${day.dinner.vitamins.C ? `<div class="nutrition-item"><div class="nutrition-label">Vit C</div><div class="nutrition-value">${day.dinner.vitamins.C.dv}%</div></div>` : ''}
-                                            ${day.dinner.vitamins.B12 ? `<div class="nutrition-item"><div class="nutrition-label">B12</div><div class="nutrition-value">${day.dinner.vitamins.B12.dv}%</div></div>` : ''}
-                                            ${day.dinner.minerals.Iron ? `<div class="nutrition-item"><div class="nutrition-label">Iron</div><div class="nutrition-value">${day.dinner.minerals.Iron.dv}%</div></div>` : ''}
-                                            ${day.dinner.minerals.Calcium ? `<div class="nutrition-item"><div class="nutrition-label">Calcium</div><div class="nutrition-value">${day.dinner.minerals.Calcium.dv}%</div></div>` : ''}
-                                            ${day.dinner.vitamins.A ? `<div class="nutrition-item"><div class="nutrition-label">Vit A</div><div class="nutrition-value">${day.dinner.vitamins.A.dv}%</div></div>` : ''}
-                                        </div>
+                                <div class="meal-content-flex">
+                                    <div class="meal-image-container">
+                                        <img src="${getMealImagePlaceholder(day.dinner.name, state.cuisine, 'dinner')}" 
+                                             alt="${day.dinner.name}" 
+                                             class="meal-image"
+                                             loading="lazy">
                                     </div>
+                                    <div class="meal-text-content">
+                                        <div class="meal-description">${day.dinner.name}</div>
+                                        <div class="meal-source">Source: ${day.dinner.source}</div>
+                                        ${day.dinner.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.dinner.healthNotes}</div>` : ''}
+                                    </div>
+                                </div>
+                                ${day.dinner.vitamins ? `
+                                <div class="nutrition-info">
+                                    <strong>🍊 Key Nutrients</strong>
+                                    <div class="nutrition-grid">
+                                        <div class="nutrition-item">
+                                            <div class="nutrition-label">Protein</div>
+                                            <div class="nutrition-value">${day.dinner.protein}g</div>
+                                        </div>
+                                        ${day.dinner.vitamins.C ? `<div class="nutrition-item"><div class="nutrition-label">Vit C</div><div class="nutrition-value">${day.dinner.vitamins.C.dv}%</div></div>` : ''}
+                                        ${day.dinner.vitamins.B12 ? `<div class="nutrition-item"><div class="nutrition-label">B12</div><div class="nutrition-value">${day.dinner.vitamins.B12.dv}%</div></div>` : ''}
+                                        ${day.dinner.minerals.Iron ? `<div class="nutrition-item"><div class="nutrition-label">Iron</div><div class="nutrition-value">${day.dinner.minerals.Iron.dv}%</div></div>` : ''}
+                                        ${day.dinner.minerals.Calcium ? `<div class="nutrition-item"><div class="nutrition-label">Calcium</div><div class="nutrition-value">${day.dinner.minerals.Calcium.dv}%</div></div>` : ''}
+                                        ${day.dinner.vitamins.A ? `<div class="nutrition-item"><div class="nutrition-label">Vit A</div><div class="nutrition-value">${day.dinner.vitamins.A.dv}%</div></div>` : ''}
+                                    </div>
+                                </div>
                                 ` : ''}
-                                <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'dinner')">🔄 Swap Meal</button>
+                                <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'dinner')" style="margin-top: 12px;">🔄 Swap Meal</button>
                             </div>
                             <div class="meal-item">
                                 <div class="meal-label">
@@ -2320,26 +2501,36 @@
                                         ${day.snack.calories} kcal
                                     </span>
                                 </div>
-                                <div class="meal-description">${day.snack.name}</div>
-                                <div class="meal-source">Source: ${day.snack.source}</div>
-                                ${day.snack.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.snack.healthNotes}</div>` : ''}
-                                ${day.snack.vitamins ? `
-                                    <div class="nutrition-info">
-                                        <strong style="color: #92400e;">🍊 Key Nutrients (% Daily Value):</strong>
-                                        <div class="nutrition-grid">
-                                            <div class="nutrition-item">
-                                                <div class="nutrition-label">Protein</div>
-                                                <div class="nutrition-value">${day.snack.protein}g</div>
-                                            </div>
-                                            ${day.snack.vitamins.C ? `<div class="nutrition-item"><div class="nutrition-label">Vit C</div><div class="nutrition-value">${day.snack.vitamins.C.dv}%</div></div>` : ''}
-                                            ${day.snack.vitamins.B12 ? `<div class="nutrition-item"><div class="nutrition-label">B12</div><div class="nutrition-value">${day.snack.vitamins.B12.dv}%</div></div>` : ''}
-                                            ${day.snack.minerals.Iron ? `<div class="nutrition-item"><div class="nutrition-label">Iron</div><div class="nutrition-value">${day.snack.minerals.Iron.dv}%</div></div>` : ''}
-                                            ${day.snack.minerals.Calcium ? `<div class="nutrition-item"><div class="nutrition-label">Calcium</div><div class="nutrition-value">${day.snack.minerals.Calcium.dv}%</div></div>` : ''}
-                                            ${day.snack.vitamins.A ? `<div class="nutrition-item"><div class="nutrition-label">Vit A</div><div class="nutrition-value">${day.snack.vitamins.A.dv}%</div></div>` : ''}
-                                        </div>
+                                <div class="meal-content-flex">
+                                    <div class="meal-image-container">
+                                        <img src="${getMealImagePlaceholder(day.snack.name, state.cuisine, 'snack')}" 
+                                             alt="${day.snack.name}" 
+                                             class="meal-image"
+                                             loading="lazy">
                                     </div>
+                                    <div class="meal-text-content">
+                                        <div class="meal-description">${day.snack.name}</div>
+                                        <div class="meal-source">Source: ${day.snack.source}</div>
+                                        ${day.snack.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.snack.healthNotes}</div>` : ''}
+                                    </div>
+                                </div>
+                                ${day.snack.vitamins ? `
+                                <div class="nutrition-info">
+                                    <strong>🍊 Key Nutrients</strong>
+                                    <div class="nutrition-grid">
+                                        <div class="nutrition-item">
+                                            <div class="nutrition-label">Protein</div>
+                                            <div class="nutrition-value">${day.snack.protein}g</div>
+                                        </div>
+                                        ${day.snack.vitamins.C ? `<div class="nutrition-item"><div class="nutrition-label">Vit C</div><div class="nutrition-value">${day.snack.vitamins.C.dv}%</div></div>` : ''}
+                                        ${day.snack.vitamins.B12 ? `<div class="nutrition-item"><div class="nutrition-label">B12</div><div class="nutrition-value">${day.snack.vitamins.B12.dv}%</div></div>` : ''}
+                                        ${day.snack.minerals.Iron ? `<div class="nutrition-item"><div class="nutrition-label">Iron</div><div class="nutrition-value">${day.snack.minerals.Iron.dv}%</div></div>` : ''}
+                                        ${day.snack.minerals.Calcium ? `<div class="nutrition-item"><div class="nutrition-label">Calcium</div><div class="nutrition-value">${day.snack.minerals.Calcium.dv}%</div></div>` : ''}
+                                        ${day.snack.vitamins.A ? `<div class="nutrition-item"><div class="nutrition-label">Vit A</div><div class="nutrition-value">${day.snack.vitamins.A.dv}%</div></div>` : ''}
+                                    </div>
+                                </div>
                                 ` : ''}
-                                <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'snack')">🔄 Swap Meal</button>
+                                <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'snack')" style="margin-top: 12px;">🔄 Swap Meal</button>
                             </div>
                         </div>
                     </div>
