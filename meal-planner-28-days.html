@@ -88,6 +88,131 @@
         .diet-desc { font-size: 14px; color: #64748b; margin-top: 8px; }
         .diet-card.selected .diet-desc { color: rgba(255, 255, 255, 0.9); }
         .age-group-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+        
+        .health-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .health-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        
+        .health-card:hover {
+            border-color: var(--primary);
+            background: #f0fdf4;
+            transform: translateY(-2px);
+        }
+        
+        .health-card.selected {
+            border-color: var(--primary);
+            background: #d1fae5;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+        }
+        
+        .health-icon {
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+        
+        .health-content {
+            flex: 1;
+        }
+        
+        .health-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            font-size: 15px;
+        }
+        
+        .health-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .selected-health {
+            background: #f0fdf4;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #bbf7d0;
+            margin-bottom: 24px;
+        }
+        
+        .health-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .health-tag {
+            background: white;
+            border: 2px solid var(--primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .health-tag-remove {
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .health-tag-remove:hover {
+            color: var(--primary-dark);
+        }
+        
+        .nutrition-info {
+            background: #fef3c7;
+            border: 2px solid #fbbf24;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 8px;
+            font-size: 13px;
+        }
+        
+        .nutrition-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .nutrition-item {
+            background: white;
+            padding: 6px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .nutrition-label {
+            font-size: 11px;
+            color: #92400e;
+            font-weight: 600;
+        }
+        
+        .nutrition-value {
+            font-size: 13px;
+            color: #78350f;
+            font-weight: bold;
+        }
+        
         .age-group-card {
             padding: 28px; border: 3px solid var(--border); border-radius: 20px; cursor: pointer;
             transition: all 0.3s; display: flex; align-items: center; gap: 24px; background: white;
@@ -571,6 +696,8 @@
             <div class="progress-step" id="step4">4</div>
             <div class="progress-line" id="line4"></div>
             <div class="progress-step" id="step5">5</div>
+            <div class="progress-line" id="line5"></div>
+            <div class="progress-step" id="step6">6</div>
         </div>
 
         <!-- Step 1: Choose Cuisine -->
@@ -659,8 +786,89 @@
             </div>
         </div>
 
-        <!-- Step 4: Choose Days -->
+        <!-- Step 4: Health Considerations -->
         <div class="section" id="section4">
+            <h2 class="section-title"><span class="section-title-icon">💚</span>Health Considerations</h2>
+            <p style="text-align: center; color: #64748b; margin-bottom: 24px;">
+                Select any health considerations to customize your meal plan (optional)
+            </p>
+            <div class="health-grid">
+                <div class="health-card" data-health="none">
+                    <div class="health-icon">✅</div>
+                    <div class="health-content">
+                        <div class="health-title">No Restrictions</div>
+                        <div class="health-description">Standard meal plan</div>
+                    </div>
+                </div>
+                <div class="health-card" data-health="low-sodium">
+                    <div class="health-icon">🧂</div>
+                    <div class="health-content">
+                        <div class="health-title">Low Sodium</div>
+                        <div class="health-description">Reduced salt intake</div>
+                    </div>
+                </div>
+                <div class="health-card" data-health="low-calorie">
+                    <div class="health-icon">⚖️</div>
+                    <div class="health-content">
+                        <div class="health-title">Low Calorie</div>
+                        <div class="health-description">Weight management</div>
+                    </div>
+                </div>
+                <div class="health-card" data-health="high-protein">
+                    <div class="health-icon">💪</div>
+                    <div class="health-content">
+                        <div class="health-title">High Protein</div>
+                        <div class="health-description">Muscle building</div>
+                    </div>
+                </div>
+                <div class="health-card" data-health="gut-friendly">
+                    <div class="health-icon">🦠</div>
+                    <div class="health-content">
+                        <div class="health-title">Gut Friendly</div>
+                        <div class="health-description">Digestive health</div>
+                    </div>
+                </div>
+                <div class="health-card" data-health="eczema">
+                    <div class="health-icon">🩹</div>
+                    <div class="health-content">
+                        <div class="health-title">Eczema</div>
+                        <div class="health-description">Anti-inflammatory</div>
+                    </div>
+                </div>
+                <div class="health-card" data-health="diabetes">
+                    <div class="health-icon">🩸</div>
+                    <div class="health-content">
+                        <div class="health-title">Diabetes</div>
+                        <div class="health-description">Blood sugar control</div>
+                    </div>
+                </div>
+                <div class="health-card" data-health="heart-health">
+                    <div class="health-icon">❤️</div>
+                    <div class="health-content">
+                        <div class="health-title">Heart Health</div>
+                        <div class="health-description">Cardiovascular support</div>
+                    </div>
+                </div>
+                <div class="health-card" data-health="gluten-free">
+                    <div class="health-icon">🌾</div>
+                    <div class="health-content">
+                        <div class="health-title">Gluten Free</div>
+                        <div class="health-description">No wheat/gluten</div>
+                    </div>
+                </div>
+            </div>
+            <div class="selected-health" id="selectedHealth" style="display: none;">
+                <h3 style="font-size: 16px; margin-bottom: 12px; color: #059669;">Selected Considerations:</h3>
+                <div id="healthTags" class="health-tags"></div>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="goToStep(3)">Back</button>
+                <button class="btn btn-primary" onclick="goToStep(5)">Continue</button>
+            </div>
+        </div>
+
+        <!-- Step 5: Choose Days -->
+        <div class="section" id="section5">
             <h2 class="section-title"><span class="section-title-icon">📅</span>How many days?</h2>
             <div class="days-selector">
                 <div class="days-label">Plan Duration: <span class="days-value" id="daysValue">7</span> days</div>
@@ -673,7 +881,7 @@
                 </p>
             </div>
             <div class="button-group">
-                <button class="btn btn-secondary" onclick="goToStep(3)">Back</button>
+                <button class="btn btn-secondary" onclick="goToStep(4)">Back</button>
                 <button class="btn btn-primary" onclick="generatePlan()">
                     <span class="btn-icon"><span>✨</span><span>Generate AI Plan</span></span>
                 </button>
@@ -681,7 +889,7 @@
         </div>
 
         <!-- Step 5: Show Plan -->
-        <div class="section" id="section5">
+        <div class="section" id="section6">
             <div id="loadingContainer" class="loading" style="display: none;">
                 <div class="spinner"></div>
                 <div class="loading-text">Generating your personalized meal plan...</div>
@@ -869,7 +1077,217 @@
     </div>
 
     <script>
-        let state = { cuisine: '', diet: '', ageGroup: '', days: 7, currentStep: 1, mealPlan: null, shoppingList: {} };
+        // Health Considerations Rules Database
+        const healthRules = {
+            'low-sodium': {
+                name: 'Low Sodium',
+                avoidIngredients: ['salt', 'soy sauce', 'pickles', 'canned', 'processed cheese', 'salted', 'brined', 'cured', 'sodium'],
+                preferIngredients: ['herbs', 'lemon', 'garlic', 'onion', 'fresh vegetables', 'fresh herbs', 'vinegar', 'spices'],
+                calorieAdjustment: 1.0,
+                proteinAdjustment: 1.0,
+                sodiumReduction: 0.4, // 60% reduction
+                notes: 'Uses herbs and spices instead of salt for flavoring',
+                recipeModifications: {
+                    'with salt': 'with herbs and spices',
+                    'salted': 'fresh',
+                    'soy sauce': 'low-sodium seasoning',
+                    'pickles': 'fresh vegetables',
+                    'processed': 'fresh'
+                }
+            },
+            'low-calorie': {
+                name: 'Low Calorie',
+                avoidIngredients: ['fried', 'butter', 'cream', 'oil', 'sugar', 'sweetened', 'deep-fried', 'ghee', 'coconut milk', 'cheese'],
+                preferIngredients: ['steamed', 'grilled', 'baked', 'fresh vegetables', 'lean protein', 'low-fat', 'air-fried'],
+                calorieAdjustment: 0.75, // 25% calorie reduction
+                proteinAdjustment: 1.1, // Slight protein increase
+                notes: 'Prepared using low-calorie cooking methods',
+                recipeModifications: {
+                    'fried': 'grilled',
+                    'deep-fried': 'air-fried',
+                    'butter': 'light oil spray',
+                    'cream': 'low-fat yogurt',
+                    'oil': 'minimal oil',
+                    'coconut milk': 'light coconut milk',
+                    'cheese': 'low-fat cheese'
+                }
+            },
+            'high-protein': {
+                name: 'High Protein',
+                avoidIngredients: ['white rice', 'white bread', 'pastries', 'sugary'],
+                preferIngredients: ['chicken breast', 'fish', 'eggs', 'Greek yogurt', 'lentils', 'quinoa', 'tofu', 'paneer', 'dal', 'legumes'],
+                calorieAdjustment: 1.05,
+                proteinAdjustment: 1.4, // 40% more protein
+                notes: 'Enhanced with additional protein sources',
+                recipeModifications: {
+                    'yogurt': 'Greek yogurt',
+                    'regular dal': 'mixed dal',
+                    'rice': 'quinoa rice blend',
+                    'bread': 'protein-enriched bread'
+                }
+            },
+            'gut-friendly': {
+                name: 'Gut Friendly',
+                avoidIngredients: ['spicy', 'fried', 'carbonated', 'raw onions', 'excessive beans', 'heavy spices', 'chili'],
+                preferIngredients: ['yogurt', 'ginger', 'oats', 'bananas', 'papaya', 'probiotics', 'fermented', 'easily digestible', 'steamed'],
+                calorieAdjustment: 1.0,
+                proteinAdjustment: 1.0,
+                notes: 'Prepared to be gentle on the digestive system',
+                recipeModifications: {
+                    'spicy': 'mild',
+                    'fried': 'steamed',
+                    'raw': 'cooked',
+                    'heavy': 'light',
+                    'chili': 'mild spices'
+                }
+            },
+            'eczema': {
+                name: 'Eczema-Friendly',
+                avoidIngredients: ['dairy', 'nuts', 'citrus', 'tomatoes', 'spicy', 'nightshades', 'acidic'],
+                preferIngredients: ['omega-3 fish', 'sweet potato', 'coconut oil', 'green vegetables', 'anti-inflammatory', 'turmeric', 'leafy greens'],
+                calorieAdjustment: 1.0,
+                proteinAdjustment: 1.0,
+                notes: 'Anti-inflammatory ingredients to support skin health',
+                recipeModifications: {
+                    'dairy': 'non-dairy alternatives',
+                    'tomato': 'pumpkin',
+                    'nuts': 'seeds',
+                    'citrus': 'berries',
+                    'cheese': 'nutritional yeast'
+                }
+            },
+            'diabetes': {
+                name: 'Diabetes-Friendly',
+                avoidIngredients: ['white rice', 'white bread', 'sugar', 'sweetened', 'fruit juice', 'refined', 'processed sugars'],
+                preferIngredients: ['whole grains', 'vegetables', 'lean protein', 'complex carbs', 'fiber-rich', 'brown rice', 'quinoa', 'millet'],
+                calorieAdjustment: 0.95,
+                proteinAdjustment: 1.15,
+                notes: 'Balanced for blood sugar control with low glycemic ingredients',
+                recipeModifications: {
+                    'white rice': 'brown rice',
+                    'white bread': 'whole grain bread',
+                    'sugar': 'natural sweetener (minimal)',
+                    'refined': 'whole grain',
+                    'sweetened': 'unsweetened'
+                }
+            },
+            'heart-health': {
+                name: 'Heart Healthy',
+                avoidIngredients: ['saturated fat', 'trans fat', 'high cholesterol', 'excess salt', 'red meat', 'fried'],
+                preferIngredients: ['fish', 'nuts', 'olive oil', 'vegetables', 'whole grains', 'oats', 'omega-3', 'fiber-rich'],
+                calorieAdjustment: 0.9,
+                proteinAdjustment: 1.1,
+                notes: 'Supports cardiovascular health with heart-friendly fats',
+                recipeModifications: {
+                    'butter': 'olive oil',
+                    'fried': 'baked',
+                    'red meat': 'fish or chicken',
+                    'whole milk': 'low-fat milk',
+                    'cream': 'heart-healthy alternatives'
+                }
+            },
+            'gluten-free': {
+                name: 'Gluten Free',
+                avoidIngredients: ['wheat', 'barley', 'rye', 'bread', 'regular pasta', 'flour', 'gluten'],
+                preferIngredients: ['rice', 'quinoa', 'certified GF oats', 'rice noodles', 'corn', 'millet', 'rice flour'],
+                calorieAdjustment: 1.0,
+                proteinAdjustment: 1.0,
+                notes: 'Made with certified gluten-free ingredients',
+                recipeModifications: {
+                    'wheat': 'rice',
+                    'bread': 'gluten-free bread',
+                    'pasta': 'rice noodles',
+                    'flour': 'rice flour',
+                    'roti': 'rice roti',
+                    'parotta': 'rice parotta'
+                }
+            }
+        };
+        
+        // Function to check if recipe contains avoided ingredients
+        function hasAvoidedIngredients(recipeName, healthConsiderations) {
+            const lowerRecipe = recipeName.toLowerCase();
+            for (const health of healthConsiderations) {
+                const rules = healthRules[health];
+                if (rules) {
+                    for (const avoided of rules.avoidIngredients) {
+                        if (lowerRecipe.includes(avoided.toLowerCase())) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        
+        // Function to apply health modifications to recipe
+        function applyHealthModifications(recipe, healthConsiderations) {
+            if (!healthConsiderations || healthConsiderations.length === 0) {
+                return recipe;
+            }
+            
+            let modifiedRecipe = { ...recipe };
+            let modifications = [];
+            let totalCalorieAdj = 1.0;
+            let totalProteinAdj = 1.0;
+            
+            // Apply modifications for each health consideration
+            healthConsiderations.forEach(health => {
+                const rules = healthRules[health];
+                if (!rules) return;
+                
+                // Modify recipe name if it contains avoided ingredients
+                Object.keys(rules.recipeModifications).forEach(from => {
+                    const to = rules.recipeModifications[from];
+                    const regex = new RegExp(from, 'gi');
+                    if (modifiedRecipe.name.match(regex)) {
+                        modifiedRecipe.name = modifiedRecipe.name.replace(regex, to);
+                        modifications.push(rules.name);
+                    }
+                });
+                
+                // Apply calorie and protein adjustments
+                totalCalorieAdj *= rules.calorieAdjustment;
+                totalProteinAdj *= rules.proteinAdjustment;
+            });
+            
+            // Apply adjustments
+            modifiedRecipe.calories = Math.round(modifiedRecipe.calories * totalCalorieAdj);
+            modifiedRecipe.protein = Math.round(modifiedRecipe.protein * totalProteinAdj);
+            
+            // Add health notes if modifications were made
+            if (modifications.length > 0) {
+                const uniqueMods = [...new Set(modifications)];
+                modifiedRecipe.healthNotes = uniqueMods.map(m => {
+                    const rules = healthRules[Object.keys(healthRules).find(k => healthRules[k].name === m)];
+                    return `💚 ${m}: ${rules.notes}`;
+                }).join(' • ');
+            }
+            
+            return modifiedRecipe;
+        }
+        
+        // Function to filter recipes based on health considerations
+        function filterHealthyRecipes(recipes, healthConsiderations) {
+            if (!healthConsiderations || healthConsiderations.length === 0) {
+                return recipes;
+            }
+            
+            // Filter out recipes with avoided ingredients
+            const filtered = recipes.filter(recipe => {
+                return !hasAvoidedIngredients(recipe.name, healthConsiderations);
+            });
+            
+            // If we filtered out too many, return modified versions of all recipes
+            if (filtered.length < 14) {
+                return recipes.map(recipe => applyHealthModifications(recipe, healthConsiderations));
+            }
+            
+            // Apply modifications to remaining recipes
+            return filtered.map(recipe => applyHealthModifications(recipe, healthConsiderations));
+        }
+
+        let state = { cuisine: '', diet: '', ageGroup: '', healthConsiderations: [], days: 7, currentStep: 1, mealPlan: null, shoppingList: {} };
 
         document.addEventListener('DOMContentLoaded', setupEventListeners);
 
@@ -900,6 +1318,81 @@
                     setTimeout(() => goToStep(4), 300);
                 });
             });
+            
+            // Health considerations - multi-select
+            document.querySelectorAll('.health-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const healthType = this.dataset.health;
+                    
+                    // If "No Restrictions" is clicked
+                    if (healthType === 'none') {
+                        document.querySelectorAll('.health-card').forEach(c => c.classList.remove('selected'));
+                        this.classList.add('selected');
+                        state.healthConsiderations = [];
+                        updateHealthTags();
+                        return;
+                    }
+                    
+                    // Remove "No Restrictions" if other option is selected
+                    document.querySelector('.health-card[data-health="none"]').classList.remove('selected');
+                    
+                    // Toggle this card
+                    if (this.classList.contains('selected')) {
+                        this.classList.remove('selected');
+                        state.healthConsiderations = state.healthConsiderations.filter(h => h !== healthType);
+                    } else {
+                        this.classList.add('selected');
+                        if (!state.healthConsiderations.includes(healthType)) {
+                            state.healthConsiderations.push(healthType);
+                        }
+                    }
+                    
+                    // If no selections, select "No Restrictions"
+                    if (state.healthConsiderations.length === 0) {
+                        document.querySelector('.health-card[data-health="none"]').classList.add('selected');
+                    }
+                    
+                    updateHealthTags();
+                });
+            });
+            
+            function updateHealthTags() {
+                const container = document.getElementById('healthTags');
+                const selectedDiv = document.getElementById('selectedHealth');
+                
+                if (state.healthConsiderations.length === 0) {
+                    selectedDiv.style.display = 'none';
+                    return;
+                }
+                
+                selectedDiv.style.display = 'block';
+                const healthNames = {
+                    'low-sodium': '🧂 Low Sodium',
+                    'low-calorie': '⚖️ Low Calorie',
+                    'high-protein': '💪 High Protein',
+                    'gut-friendly': '🦠 Gut Friendly',
+                    'eczema': '🩹 Eczema',
+                    'diabetes': '🩸 Diabetes',
+                    'heart-health': '❤️ Heart Health',
+                    'gluten-free': '🌾 Gluten Free'
+                };
+                
+                container.innerHTML = state.healthConsiderations.map(h => `
+                    <div class="health-tag">
+                        ${healthNames[h]}
+                        <span class="health-tag-remove" onclick="removeHealth('${h}')">×</span>
+                    </div>
+                `).join('');
+            }
+            
+            window.removeHealth = function(healthType) {
+                state.healthConsiderations = state.healthConsiderations.filter(h => h !== healthType);
+                document.querySelector(`.health-card[data-health="${healthType}"]`).classList.remove('selected');
+                if (state.healthConsiderations.length === 0) {
+                    document.querySelector('.health-card[data-health="none"]').classList.add('selected');
+                }
+                updateHealthTags();
+            };
 
             const slider = document.getElementById('daysSlider');
             slider.addEventListener('input', function() {
@@ -913,13 +1406,13 @@
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById('section' + step).classList.add('active');
             
-            for (let i = 1; i <= 5; i++) {
+            for (let i = 1; i <= 6; i++) {
                 const stepEl = document.getElementById('step' + i);
                 stepEl.classList.remove('active', 'completed');
                 if (i < step) stepEl.classList.add('completed');
                 else if (i === step) stepEl.classList.add('active');
                 
-                if (i < 5) {
+                if (i < 6) {
                     const lineEl = document.getElementById('line' + i);
                     if (i < step) lineEl.classList.add('active');
                     else lineEl.classList.remove('active');
@@ -928,7 +1421,7 @@
         }
 
         async function generatePlan() {
-            goToStep(5);
+            goToStep(6);
             document.getElementById('loadingContainer').style.display = 'block';
             document.getElementById('planContent').style.display = 'none';
 
@@ -1245,21 +1738,29 @@
             }
 
             const meals = generateRecipes(state.cuisine, state.diet, state.ageGroup);
+            
+            // Apply health considerations filtering and modifications
+            const healthyMeals = {
+                breakfast: filterHealthyRecipes(meals.breakfast, state.healthConsiderations),
+                lunch: filterHealthyRecipes(meals.lunch, state.healthConsiderations),
+                dinner: filterHealthyRecipes(meals.dinner, state.healthConsiderations),
+                snacks: filterHealthyRecipes(meals.snacks, state.healthConsiderations)
+            };
             const plan = [];
             
             for (let i = 0; i < state.days; i++) {
                 plan.push({
                     day: i + 1,
-                    breakfast: meals.breakfast[i],
-                    lunch: meals.lunch[i],
-                    dinner: meals.dinner[i],
-                    snack: meals.snacks[i]
+                    breakfast: healthyMeals.breakfast[i],
+                    lunch: healthyMeals.lunch[i],
+                    dinner: healthyMeals.dinner[i],
+                    snack: healthyMeals.snacks[i]
                 });
             }
 
             return {
                 plan: plan,
-                allRecipes: meals, // Store all recipes for swapping
+                allRecipes: healthyMeals, // Store all recipes for swapping
                 source: sources[state.cuisine],
                 guidelines: guidelines[state.ageGroup],
                 lastUpdated: new Date().toLocaleDateString()
@@ -1284,6 +1785,26 @@
                 <h3>Your ${state.days}-Day Professional Meal Plan</h3>
                 <p><strong>${cuisineNames[state.cuisine]}</strong> • <strong>${dietNames[state.diet]}</strong></p>
                 <p>For <strong>${ageGroupNames[state.ageGroup]}</strong></p>
+                ${state.healthConsiderations.length > 0 ? `
+                    <div style="background: #d1fae5; padding: 12px; border-radius: 8px; margin: 12px 0; border: 2px solid #059669;">
+                        <strong style="color: #065f46;">💚 Health Considerations Applied:</strong>
+                        <div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px;">
+                            ${state.healthConsiderations.map(h => {
+                                const names = {
+                                    'low-sodium': '🧂 Low Sodium',
+                                    'low-calorie': '⚖️ Low Calorie',
+                                    'high-protein': '💪 High Protein',
+                                    'gut-friendly': '🦠 Gut Friendly',
+                                    'eczema': '🩹 Eczema',
+                                    'diabetes': '🩸 Diabetes',
+                                    'heart-health': '❤️ Heart Health',
+                                    'gluten-free': '🌾 Gluten Free'
+                                };
+                                return `<span style="background: white; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #059669; font-weight: 600;">${names[h]}</span>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                ` : ''}
                 <p style="font-size: 14px; margin-top: 12px;">Daily target: ${mealData.guidelines.calories} • Protein: ${mealData.guidelines.protein}</p>
                 <div class="source-badge"><span>✓</span><span>Verified by ${mealData.source}</span></div>
                 <p style="font-size: 13px; color: #64748b; margin-top: 8px;">
@@ -1314,6 +1835,7 @@
                                 </div>
                                 <div class="meal-description">${day.breakfast.name}</div>
                                 <div class="meal-source">Source: ${day.breakfast.source}</div>
+                                ${day.breakfast.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.breakfast.healthNotes}</div>` : ''}
                                 <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'breakfast')">🔄 Swap Meal</button>
                             </div>
                             <div class="meal-item">
@@ -1325,6 +1847,7 @@
                                 </div>
                                 <div class="meal-description">${day.lunch.name}</div>
                                 <div class="meal-source">Source: ${day.lunch.source}</div>
+                                ${day.lunch.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.lunch.healthNotes}</div>` : ''}
                                 <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'lunch')">🔄 Swap Meal</button>
                             </div>
                             <div class="meal-item">
@@ -1336,6 +1859,7 @@
                                 </div>
                                 <div class="meal-description">${day.dinner.name}</div>
                                 <div class="meal-source">Source: ${day.dinner.source}</div>
+                                ${day.dinner.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.dinner.healthNotes}</div>` : ''}
                                 <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'dinner')">🔄 Swap Meal</button>
                             </div>
                             <div class="meal-item">
@@ -1347,6 +1871,7 @@
                                 </div>
                                 <div class="meal-description">${day.snack.name}</div>
                                 <div class="meal-source">Source: ${day.snack.source}</div>
+                                ${day.snack.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.snack.healthNotes}</div>` : ''}
                                 <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'snack')">🔄 Swap Meal</button>
                             </div>
                         </div>
@@ -1455,8 +1980,8 @@
         }
 
         function resetPlanner() {
-            state = { cuisine: '', diet: '', ageGroup: '', days: 7, currentStep: 1, mealPlan: null, shoppingList: {}, allRecipes: null };
-            document.querySelectorAll('.cuisine-card, .diet-card, .age-group-card').forEach(c => c.classList.remove('selected'));
+            state = { cuisine: '', diet: '', ageGroup: '', healthConsiderations: [], days: 7, currentStep: 1, mealPlan: null, shoppingList: {}, allRecipes: null };
+            document.querySelectorAll('.cuisine-card, .diet-card, .age-group-card, .health-card').forEach(c => c.classList.remove('selected'));
             document.getElementById('daysSlider').value = 7;
             document.getElementById('daysValue').textContent = '7';
             document.getElementById('calendarViewContainer').style.display = 'none';
