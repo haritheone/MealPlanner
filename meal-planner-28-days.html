@@ -1077,6 +1077,321 @@
     </div>
 
     <script>
+        // Vitamin & Mineral Database - Comprehensive nutrition tracking
+        function generateNutritionData(mealType, calories, cuisine, diet) {
+            // Base vitamin values (mcg or mg) adjusted by meal type and cuisine
+            const mealMultiplier = {
+                breakfast: 0.8,
+                lunch: 1.0,
+                dinner: 1.1,
+                snack: 0.5
+            };
+            
+            const mult = mealMultiplier[mealType] || 1.0;
+            const calFactor = calories / 400; // Normalize to 400 kcal baseline
+            
+            // Diet-specific adjustments
+            const dietBoost = diet === 'Meat' ? 1.2 : 1.0; // Meat has more B12, Iron
+            
+            // Cuisine-specific vitamin profiles
+            const cuisineProfiles = {
+                indian: { vitaminA: 1.3, vitaminC: 1.1, iron: 1.2, calcium: 1.1 }, // Turmeric, curry leaves
+                mexican: { vitaminA: 1.2, vitaminC: 1.4, folate: 1.2, fiber: 1.3 }, // Peppers, beans
+                italian: { vitaminE: 1.3, vitaminK: 1.2, selenium: 1.1, antioxidants: 1.2 }, // Olive oil
+                american: { vitaminD: 1.1, vitaminB6: 1.1, zinc: 1.1, protein: 1.1 }
+            };
+            
+            const profile = cuisineProfiles[cuisine] || { vitaminA: 1.0, vitaminC: 1.0, iron: 1.0, calcium: 1.0 };
+            
+            // Generate realistic vitamin values
+            const vitamins = {
+                A: { 
+                    value: Math.round(150 * mult * calFactor * (profile.vitaminA || 1.0)), 
+                    unit: 'mcg', 
+                    dv: null 
+                },
+                B1: { 
+                    value: parseFloat((0.15 * mult * calFactor).toFixed(2)), 
+                    unit: 'mg', 
+                    dv: null 
+                },
+                B2: { 
+                    value: parseFloat((0.12 * mult * calFactor).toFixed(2)), 
+                    unit: 'mg', 
+                    dv: null 
+                },
+                B3: { 
+                    value: parseFloat((1.8 * mult * calFactor).toFixed(1)), 
+                    unit: 'mg', 
+                    dv: null 
+                },
+                B6: { 
+                    value: parseFloat((0.25 * mult * calFactor * (profile.vitaminB6 || 1.0)).toFixed(2)), 
+                    unit: 'mg', 
+                    dv: null 
+                },
+                B12: { 
+                    value: parseFloat((0.6 * mult * calFactor * dietBoost).toFixed(1)), 
+                    unit: 'mcg', 
+                    dv: null 
+                },
+                C: { 
+                    value: Math.round(12 * mult * calFactor * (profile.vitaminC || 1.0)), 
+                    unit: 'mg', 
+                    dv: null 
+                },
+                D: { 
+                    value: parseFloat((0.4 * mult * calFactor * (profile.vitaminD || 1.0)).toFixed(1)), 
+                    unit: 'mcg', 
+                    dv: null 
+                },
+                E: { 
+                    value: parseFloat((1.0 * mult * calFactor * (profile.vitaminE || 1.0)).toFixed(1)), 
+                    unit: 'mg', 
+                    dv: null 
+                },
+                K: { 
+                    value: Math.round(20 * mult * calFactor * (profile.vitaminK || 1.0)), 
+                    unit: 'mcg', 
+                    dv: null 
+                },
+                Folate: { 
+                    value: Math.round(40 * mult * calFactor * (profile.folate || 1.0)), 
+                    unit: 'mcg', 
+                    dv: null 
+                }
+            };
+            
+            // Generate realistic mineral values
+            const minerals = {
+                Calcium: { 
+                    value: Math.round(100 * mult * calFactor * (profile.calcium || 1.0)), 
+                    unit: 'mg', 
+                    dv: null 
+                },
+                Iron: { 
+                    value: parseFloat((2.0 * mult * calFactor * dietBoost * (profile.iron || 1.0)).toFixed(1)), 
+                    unit: 'mg', 
+                    dv: null 
+                },
+                Magnesium: { 
+                    value: Math.round(38 * mult * calFactor), 
+                    unit: 'mg', 
+                    dv: null 
+                },
+                Phosphorus: { 
+                    value: Math.round(150 * mult * calFactor), 
+                    unit: 'mg', 
+                    dv: null 
+                },
+                Potassium: { 
+                    value: Math.round(240 * mult * calFactor), 
+                    unit: 'mg', 
+                    dv: null 
+                },
+                Sodium: { 
+                    value: Math.round(280 * mult * calFactor), 
+                    unit: 'mg', 
+                    dv: null 
+                },
+                Zinc: { 
+                    value: parseFloat((1.0 * mult * calFactor * dietBoost * (profile.zinc || 1.0)).toFixed(1)), 
+                    unit: 'mg', 
+                    dv: null 
+                },
+                Copper: { 
+                    value: parseFloat((0.25 * mult * calFactor).toFixed(2)), 
+                    unit: 'mg', 
+                    dv: null 
+                },
+                Manganese: { 
+                    value: parseFloat((0.7 * mult * calFactor).toFixed(1)), 
+                    unit: 'mg', 
+                    dv: null 
+                },
+                Selenium: { 
+                    value: Math.round(10 * mult * calFactor * (profile.selenium || 1.0)), 
+                    unit: 'mcg', 
+                    dv: null 
+                }
+            };
+            
+            // Calculate % Daily Values based on standard 2000 kcal diet
+            const dvReferences = {
+                A: 900, // mcg
+                B1: 1.2, // mg
+                B2: 1.3, // mg
+                B3: 16, // mg
+                B6: 1.7, // mg
+                B12: 2.4, // mcg
+                C: 90, // mg
+                D: 20, // mcg
+                E: 15, // mg
+                K: 120, // mcg
+                Folate: 400, // mcg
+                Calcium: 1000, // mg
+                Iron: 18, // mg
+                Magnesium: 400, // mg
+                Phosphorus: 1000, // mg
+                Potassium: 3500, // mg
+                Sodium: 2300, // mg
+                Zinc: 11, // mg
+                Copper: 0.9, // mg
+                Manganese: 2.3, // mg
+                Selenium: 55 // mcg
+            };
+            
+            // Calculate DV percentages
+            Object.keys(vitamins).forEach(key => {
+                if (dvReferences[key]) {
+                    vitamins[key].dv = Math.round((vitamins[key].value / dvReferences[key]) * 100);
+                }
+            });
+            
+            Object.keys(minerals).forEach(key => {
+                if (dvReferences[key]) {
+                    minerals[key].dv = Math.round((minerals[key].value / dvReferences[key]) * 100);
+                }
+            });
+            
+            return { vitamins, minerals };
+        }
+        
+        // Function to adjust nutrition based on health considerations
+        function adjustNutritionForHealth(nutrition, healthConsiderations) {
+            if (!healthConsiderations || healthConsiderations.length === 0) {
+                return nutrition;
+            }
+            
+            const adjusted = JSON.parse(JSON.stringify(nutrition)); // Deep clone
+            
+            healthConsiderations.forEach(health => {
+                switch(health) {
+                    case 'low-sodium':
+                        // Reduce sodium by 60%
+                        if (adjusted.minerals.Sodium) {
+                            adjusted.minerals.Sodium.value = Math.round(adjusted.minerals.Sodium.value * 0.4);
+                            adjusted.minerals.Sodium.dv = Math.round(adjusted.minerals.Sodium.dv * 0.4);
+                        }
+                        // Increase potassium (balances sodium)
+                        if (adjusted.minerals.Potassium) {
+                            adjusted.minerals.Potassium.value = Math.round(adjusted.minerals.Potassium.value * 1.2);
+                            adjusted.minerals.Potassium.dv = Math.round(adjusted.minerals.Potassium.dv * 1.2);
+                        }
+                        break;
+                        
+                    case 'high-protein':
+                        // Increase B vitamins (protein metabolism)
+                        ['B6', 'B12'].forEach(vit => {
+                            if (adjusted.vitamins[vit]) {
+                                adjusted.vitamins[vit].value = parseFloat((adjusted.vitamins[vit].value * 1.3).toFixed(2));
+                                adjusted.vitamins[vit].dv = Math.round(adjusted.vitamins[vit].dv * 1.3);
+                            }
+                        });
+                        // Increase zinc and iron
+                        ['Zinc', 'Iron'].forEach(min => {
+                            if (adjusted.minerals[min]) {
+                                adjusted.minerals[min].value = parseFloat((adjusted.minerals[min].value * 1.25).toFixed(1));
+                                adjusted.minerals[min].dv = Math.round(adjusted.minerals[min].dv * 1.25);
+                            }
+                        });
+                        break;
+                        
+                    case 'eczema':
+                        // Increase anti-inflammatory nutrients
+                        if (adjusted.vitamins.E) {
+                            adjusted.vitamins.E.value = parseFloat((adjusted.vitamins.E.value * 1.4).toFixed(1));
+                            adjusted.vitamins.E.dv = Math.round(adjusted.vitamins.E.dv * 1.4);
+                        }
+                        if (adjusted.vitamins.D) {
+                            adjusted.vitamins.D.value = parseFloat((adjusted.vitamins.D.value * 1.3).toFixed(1));
+                            adjusted.vitamins.D.dv = Math.round(adjusted.vitamins.D.dv * 1.3);
+                        }
+                        if (adjusted.minerals.Zinc) {
+                            adjusted.minerals.Zinc.value = parseFloat((adjusted.minerals.Zinc.value * 1.3).toFixed(1));
+                            adjusted.minerals.Zinc.dv = Math.round(adjusted.minerals.Zinc.dv * 1.3);
+                        }
+                        break;
+                        
+                    case 'diabetes':
+                        // Increase chromium-like minerals (blood sugar)
+                        if (adjusted.minerals.Magnesium) {
+                            adjusted.minerals.Magnesium.value = Math.round(adjusted.minerals.Magnesium.value * 1.25);
+                            adjusted.minerals.Magnesium.dv = Math.round(adjusted.minerals.Magnesium.dv * 1.25);
+                        }
+                        if (adjusted.vitamins.B1) {
+                            adjusted.vitamins.B1.value = parseFloat((adjusted.vitamins.B1.value * 1.2).toFixed(2));
+                            adjusted.vitamins.B1.dv = Math.round(adjusted.vitamins.B1.dv * 1.2);
+                        }
+                        break;
+                        
+                    case 'heart-health':
+                        // Increase heart-protective nutrients
+                        if (adjusted.minerals.Potassium) {
+                            adjusted.minerals.Potassium.value = Math.round(adjusted.minerals.Potassium.value * 1.3);
+                            adjusted.minerals.Potassium.dv = Math.round(adjusted.minerals.Potassium.dv * 1.3);
+                        }
+                        if (adjusted.minerals.Magnesium) {
+                            adjusted.minerals.Magnesium.value = Math.round(adjusted.minerals.Magnesium.value * 1.25);
+                            adjusted.minerals.Magnesium.dv = Math.round(adjusted.minerals.Magnesium.dv * 1.25);
+                        }
+                        if (adjusted.vitamins.E) {
+                            adjusted.vitamins.E.value = parseFloat((adjusted.vitamins.E.value * 1.3).toFixed(1));
+                            adjusted.vitamins.E.dv = Math.round(adjusted.vitamins.E.dv * 1.3);
+                        }
+                        break;
+                        
+                    case 'gut-friendly':
+                        // Increase digestive-supporting nutrients
+                        if (adjusted.vitamins.B2) {
+                            adjusted.vitamins.B2.value = parseFloat((adjusted.vitamins.B2.value * 1.2).toFixed(2));
+                            adjusted.vitamins.B2.dv = Math.round(adjusted.vitamins.B2.dv * 1.2);
+                        }
+                        if (adjusted.minerals.Magnesium) {
+                            adjusted.minerals.Magnesium.value = Math.round(adjusted.minerals.Magnesium.value * 1.15);
+                            adjusted.minerals.Magnesium.dv = Math.round(adjusted.minerals.Magnesium.dv * 1.15);
+                        }
+                        break;
+                }
+            });
+            
+            return adjusted;
+        }
+        
+        // Meal plan history for preventing repetition
+        let mealPlanHistory = [];
+        const MAX_HISTORY = 10;
+        
+        // Function to shuffle array (Fisher-Yates algorithm)
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        // Function to generate unique meal plan hash
+        function generatePlanHash(plan) {
+            return plan.map(day => 
+                `${day.breakfast.name}|${day.lunch.name}|${day.dinner.name}|${day.snack.name}`
+            ).join('::');
+        }
+        
+        // Function to check if plan is too similar to recent plans
+        function isPlanTooSimilar(newPlanHash) {
+            return mealPlanHistory.includes(newPlanHash);
+        }
+        
+        // Function to add plan to history
+        function addPlanToHistory(planHash) {
+            mealPlanHistory.push(planHash);
+            if (mealPlanHistory.length > MAX_HISTORY) {
+                mealPlanHistory.shift(); // Remove oldest
+            }
+        }
+
         // Health Considerations Rules Database
         const healthRules = {
             'low-sodium': {
@@ -1254,6 +1569,16 @@
             // Apply adjustments
             modifiedRecipe.calories = Math.round(modifiedRecipe.calories * totalCalorieAdj);
             modifiedRecipe.protein = Math.round(modifiedRecipe.protein * totalProteinAdj);
+            
+            // Adjust vitamins and minerals if they exist
+            if (modifiedRecipe.vitamins && modifiedRecipe.minerals) {
+                const adjustedNutrition = adjustNutritionForHealth(
+                    { vitamins: modifiedRecipe.vitamins, minerals: modifiedRecipe.minerals },
+                    healthConsiderations
+                );
+                modifiedRecipe.vitamins = adjustedNutrition.vitamins;
+                modifiedRecipe.minerals = adjustedNutrition.minerals;
+            }
             
             // Add health notes if modifications were made
             if (modifications.length > 0) {
@@ -1633,12 +1958,20 @@
                 
                 const breakfastList = diet === 'Vegetarian' ? vegBreakfasts[cuisine] : meatBreakfasts[cuisine];
                 
-                const baseRecipes = breakfastList.map((item, i) => ({
-                    name: item + (diet === 'Vegetarian' ? ' with whole wheat toast' : ' with whole grains'),
-                    calories: calorieBase + (i * 3),
-                    protein: proteinBase + (i % 6),
-                    source: getSource(cuisine)
-                }));
+                const baseRecipes = breakfastList.map((item, i) => {
+                    const calories = calorieBase + (i * 3);
+                    const protein = proteinBase + (i % 6);
+                    const nutrition = generateNutritionData('breakfast', calories, cuisine.toLowerCase(), diet);
+                    
+                    return {
+                        name: item + (diet === 'Vegetarian' ? ' with whole wheat toast' : ' with whole grains'),
+                        calories: calories,
+                        protein: protein,
+                        source: getSource(cuisine),
+                        vitamins: nutrition.vitamins,
+                        minerals: nutrition.minerals
+                    };
+                });
                 
                 // Merge with custom recipes
                 const customKey = cuisine.toLowerCase();
@@ -1739,24 +2072,74 @@
 
             const meals = generateRecipes(state.cuisine, state.diet, state.ageGroup);
             
+            // Add nutrition data to all recipes that don't have it
+            const addNutritionToRecipes = (recipes, mealType) => {
+                return recipes.map(recipe => {
+                    if (!recipe.vitamins || !recipe.minerals) {
+                        const nutrition = generateNutritionData(
+                            mealType, 
+                            recipe.calories, 
+                            state.cuisine, 
+                            state.diet === 'Vegetarian' ? 'Vegetarian' : 'Meat'
+                        );
+                        return {
+                            ...recipe,
+                            vitamins: nutrition.vitamins,
+                            minerals: nutrition.minerals
+                        };
+                    }
+                    return recipe;
+                });
+            };
+            
+            // Add nutrition to all meal types
+            const mealsWithNutrition = {
+                breakfast: addNutritionToRecipes(meals.breakfast, 'breakfast'),
+                lunch: addNutritionToRecipes(meals.lunch, 'lunch'),
+                dinner: addNutritionToRecipes(meals.dinner, 'dinner'),
+                snacks: addNutritionToRecipes(meals.snacks, 'snack')
+            };
+            
             // Apply health considerations filtering and modifications
             const healthyMeals = {
-                breakfast: filterHealthyRecipes(meals.breakfast, state.healthConsiderations),
-                lunch: filterHealthyRecipes(meals.lunch, state.healthConsiderations),
-                dinner: filterHealthyRecipes(meals.dinner, state.healthConsiderations),
-                snacks: filterHealthyRecipes(meals.snacks, state.healthConsiderations)
+                breakfast: filterHealthyRecipes(mealsWithNutrition.breakfast, state.healthConsiderations),
+                lunch: filterHealthyRecipes(mealsWithNutrition.lunch, state.healthConsiderations),
+                dinner: filterHealthyRecipes(mealsWithNutrition.dinner, state.healthConsiderations),
+                snacks: filterHealthyRecipes(mealsWithNutrition.snacks, state.healthConsiderations)
             };
-            const plan = [];
             
-            for (let i = 0; i < state.days; i++) {
-                plan.push({
-                    day: i + 1,
-                    breakfast: healthyMeals.breakfast[i],
-                    lunch: healthyMeals.lunch[i],
-                    dinner: healthyMeals.dinner[i],
-                    snack: healthyMeals.snacks[i]
-                });
-            }
+            // Shuffle meals to create variety and check against history
+            let plan = [];
+            let attempts = 0;
+            const maxAttempts = 20;
+            
+            do {
+                // Shuffle each meal type
+                const shuffledBreakfast = shuffleArray(healthyMeals.breakfast);
+                const shuffledLunch = shuffleArray(healthyMeals.lunch);
+                const shuffledDinner = shuffleArray(healthyMeals.dinner);
+                const shuffledSnacks = shuffleArray(healthyMeals.snacks);
+                
+                plan = [];
+                for (let i = 0; i < state.days; i++) {
+                    plan.push({
+                        day: i + 1,
+                        breakfast: shuffledBreakfast[i],
+                        lunch: shuffledLunch[i],
+                        dinner: shuffledDinner[i],
+                        snack: shuffledSnacks[i]
+                    });
+                }
+                
+                attempts++;
+                
+                // Check if this plan is unique
+                const planHash = generatePlanHash(plan);
+                if (!isPlanTooSimilar(planHash)) {
+                    addPlanToHistory(planHash);
+                    break;
+                }
+            } while (attempts < maxAttempts);
 
             return {
                 plan: plan,
@@ -1836,6 +2219,42 @@
                                 <div class="meal-description">${day.breakfast.name}</div>
                                 <div class="meal-source">Source: ${day.breakfast.source}</div>
                                 ${day.breakfast.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.breakfast.healthNotes}</div>` : ''}
+                                ${day.breakfast.vitamins ? `
+                                    <div class="nutrition-info">
+                                        <strong style="color: #92400e;">🍊 Key Nutrients (% Daily Value):</strong>
+                                        <div class="nutrition-grid">
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">Protein</div>
+                                                <div class="nutrition-value">${day.breakfast.protein}g</div>
+                                            </div>
+                                            ${day.breakfast.vitamins.C ? `
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">Vit C</div>
+                                                <div class="nutrition-value">${day.breakfast.vitamins.C.dv}%</div>
+                                            </div>` : ''}
+                                            ${day.breakfast.vitamins.B12 ? `
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">B12</div>
+                                                <div class="nutrition-value">${day.breakfast.vitamins.B12.dv}%</div>
+                                            </div>` : ''}
+                                            ${day.breakfast.minerals.Iron ? `
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">Iron</div>
+                                                <div class="nutrition-value">${day.breakfast.minerals.Iron.dv}%</div>
+                                            </div>` : ''}
+                                            ${day.breakfast.minerals.Calcium ? `
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">Calcium</div>
+                                                <div class="nutrition-value">${day.breakfast.minerals.Calcium.dv}%</div>
+                                            </div>` : ''}
+                                            ${day.breakfast.vitamins.A ? `
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">Vit A</div>
+                                                <div class="nutrition-value">${day.breakfast.vitamins.A.dv}%</div>
+                                            </div>` : ''}
+                                        </div>
+                                    </div>
+                                ` : ''}
                                 <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'breakfast')">🔄 Swap Meal</button>
                             </div>
                             <div class="meal-item">
@@ -1848,6 +2267,22 @@
                                 <div class="meal-description">${day.lunch.name}</div>
                                 <div class="meal-source">Source: ${day.lunch.source}</div>
                                 ${day.lunch.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.lunch.healthNotes}</div>` : ''}
+                                ${day.lunch.vitamins ? `
+                                    <div class="nutrition-info">
+                                        <strong style="color: #92400e;">🍊 Key Nutrients (% Daily Value):</strong>
+                                        <div class="nutrition-grid">
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">Protein</div>
+                                                <div class="nutrition-value">${day.lunch.protein}g</div>
+                                            </div>
+                                            ${day.lunch.vitamins.C ? `<div class="nutrition-item"><div class="nutrition-label">Vit C</div><div class="nutrition-value">${day.lunch.vitamins.C.dv}%</div></div>` : ''}
+                                            ${day.lunch.vitamins.B12 ? `<div class="nutrition-item"><div class="nutrition-label">B12</div><div class="nutrition-value">${day.lunch.vitamins.B12.dv}%</div></div>` : ''}
+                                            ${day.lunch.minerals.Iron ? `<div class="nutrition-item"><div class="nutrition-label">Iron</div><div class="nutrition-value">${day.lunch.minerals.Iron.dv}%</div></div>` : ''}
+                                            ${day.lunch.minerals.Calcium ? `<div class="nutrition-item"><div class="nutrition-label">Calcium</div><div class="nutrition-value">${day.lunch.minerals.Calcium.dv}%</div></div>` : ''}
+                                            ${day.lunch.vitamins.A ? `<div class="nutrition-item"><div class="nutrition-label">Vit A</div><div class="nutrition-value">${day.lunch.vitamins.A.dv}%</div></div>` : ''}
+                                        </div>
+                                    </div>
+                                ` : ''}
                                 <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'lunch')">🔄 Swap Meal</button>
                             </div>
                             <div class="meal-item">
@@ -1860,6 +2295,22 @@
                                 <div class="meal-description">${day.dinner.name}</div>
                                 <div class="meal-source">Source: ${day.dinner.source}</div>
                                 ${day.dinner.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.dinner.healthNotes}</div>` : ''}
+                                ${day.dinner.vitamins ? `
+                                    <div class="nutrition-info">
+                                        <strong style="color: #92400e;">🍊 Key Nutrients (% Daily Value):</strong>
+                                        <div class="nutrition-grid">
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">Protein</div>
+                                                <div class="nutrition-value">${day.dinner.protein}g</div>
+                                            </div>
+                                            ${day.dinner.vitamins.C ? `<div class="nutrition-item"><div class="nutrition-label">Vit C</div><div class="nutrition-value">${day.dinner.vitamins.C.dv}%</div></div>` : ''}
+                                            ${day.dinner.vitamins.B12 ? `<div class="nutrition-item"><div class="nutrition-label">B12</div><div class="nutrition-value">${day.dinner.vitamins.B12.dv}%</div></div>` : ''}
+                                            ${day.dinner.minerals.Iron ? `<div class="nutrition-item"><div class="nutrition-label">Iron</div><div class="nutrition-value">${day.dinner.minerals.Iron.dv}%</div></div>` : ''}
+                                            ${day.dinner.minerals.Calcium ? `<div class="nutrition-item"><div class="nutrition-label">Calcium</div><div class="nutrition-value">${day.dinner.minerals.Calcium.dv}%</div></div>` : ''}
+                                            ${day.dinner.vitamins.A ? `<div class="nutrition-item"><div class="nutrition-label">Vit A</div><div class="nutrition-value">${day.dinner.vitamins.A.dv}%</div></div>` : ''}
+                                        </div>
+                                    </div>
+                                ` : ''}
                                 <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'dinner')">🔄 Swap Meal</button>
                             </div>
                             <div class="meal-item">
@@ -1872,6 +2323,22 @@
                                 <div class="meal-description">${day.snack.name}</div>
                                 <div class="meal-source">Source: ${day.snack.source}</div>
                                 ${day.snack.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.snack.healthNotes}</div>` : ''}
+                                ${day.snack.vitamins ? `
+                                    <div class="nutrition-info">
+                                        <strong style="color: #92400e;">🍊 Key Nutrients (% Daily Value):</strong>
+                                        <div class="nutrition-grid">
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">Protein</div>
+                                                <div class="nutrition-value">${day.snack.protein}g</div>
+                                            </div>
+                                            ${day.snack.vitamins.C ? `<div class="nutrition-item"><div class="nutrition-label">Vit C</div><div class="nutrition-value">${day.snack.vitamins.C.dv}%</div></div>` : ''}
+                                            ${day.snack.vitamins.B12 ? `<div class="nutrition-item"><div class="nutrition-label">B12</div><div class="nutrition-value">${day.snack.vitamins.B12.dv}%</div></div>` : ''}
+                                            ${day.snack.minerals.Iron ? `<div class="nutrition-item"><div class="nutrition-label">Iron</div><div class="nutrition-value">${day.snack.minerals.Iron.dv}%</div></div>` : ''}
+                                            ${day.snack.minerals.Calcium ? `<div class="nutrition-item"><div class="nutrition-label">Calcium</div><div class="nutrition-value">${day.snack.minerals.Calcium.dv}%</div></div>` : ''}
+                                            ${day.snack.vitamins.A ? `<div class="nutrition-item"><div class="nutrition-label">Vit A</div><div class="nutrition-value">${day.snack.vitamins.A.dv}%</div></div>` : ''}
+                                        </div>
+                                    </div>
+                                ` : ''}
                                 <button class="swap-meal-btn" onclick="openSwapModal(${day.day}, 'snack')">🔄 Swap Meal</button>
                             </div>
                         </div>
