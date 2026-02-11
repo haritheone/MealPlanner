@@ -345,22 +345,15 @@
                 gap: 8px;
             }
             
-            .meal-image-container {
-                width: 90px;
-                height: 90px;
-            }
-            
-            .meal-content-flex {
-                gap: 12px;
-            }
-            
             .meal-description {
                 font-size: 15px;
                 line-height: 1.4;
+                margin-left: 30px;
             }
             
             .meal-source {
                 font-size: 11px;
+                margin-left: 30px;
             }
             
             .meal-item {
@@ -663,47 +656,14 @@
         }
         .meal-icon { font-size: 20px; }
         
-        .meal-content-flex {
-            display: flex;
-            gap: 16px;
-            align-items: flex-start;
-            margin-top: 8px;
-        }
-        
-        .meal-image-container {
-            flex-shrink: 0;
-            width: 120px;
-            height: 120px;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 2px solid var(--border);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .meal-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s;
-        }
-        
-        .meal-image:hover {
-            transform: scale(1.05);
-        }
-        
-        .meal-text-content {
-            flex: 1;
-            min-width: 0;
-        }
-        
         .meal-description { 
             color: var(--text-primary); 
-            margin-left: 0;
+            margin-left: 30px; 
             line-height: 1.6; 
             font-size: 17px;
             font-weight: 600;
             font-family: 'Fraunces', serif;
-            margin-top: 0;
+            margin-top: 4px;
             margin-bottom: 8px;
         }
         .meal-source { font-size: 12px; color: var(--primary); margin-left: 30px; margin-top: 6px; font-style: italic; }
@@ -1498,42 +1458,8 @@
         }
         
         // Alternative: Generate a colored gradient placeholder with emoji
-        function getMealImagePlaceholder(mealName, cuisine, mealType) {
-            try {
-                const cuisineColors = {
-                    indian: ['#FF6B35', '#F7931E'],
-                    mexican: ['#C1666B', '#D4A5A5'],
-                    italian: ['#48A9A6', '#4281A4'],
-                    american: ['#E63946', '#F77F00']
-                };
-                
-                const colors = cuisineColors[cuisine] || ['#059669', '#10b981'];
-                const safeMealName = (mealName || 'Meal').substring(0, 25).replace(/[<>&'"]/g, ''); // Remove problematic characters
-                
-                // Use unique ID for gradient
-                const gradId = 'grad' + Math.random().toString(36).substr(2, 9);
-                
-                // Create SVG WITHOUT emojis in text (emojis cause encoding issues)
-                const svg = `<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:${colors[0]};stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:${colors[1]};stop-opacity:1" />
-                        </linearGradient>
-                    </defs>
-                    <rect width="300" height="300" fill="url(#${gradId})"/>
-                    <text x="50%" y="65%" font-size="18" text-anchor="middle" fill="white" font-weight="bold" opacity="0.9">${safeMealName}</text>
-                </svg>`;
-                
-                // Use URI encoding instead of base64 to avoid emoji issues
-                return 'data:image/svg+xml,' + encodeURIComponent(svg);
-            } catch (error) {
-                console.error('Error generating meal image:', error);
-                // Return a simple fallback without emojis
-                const fallbackSvg = '<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="300" fill="#059669"/><circle cx="150" cy="150" r="60" fill="white" opacity="0.3"/></svg>';
-                return 'data:image/svg+xml,' + encodeURIComponent(fallbackSvg);
-            }
-        }
+        // getMealImagePlaceholder function removed - images no longer displayed
+        // Images were causing encoding issues and have been removed from the UI
         
         // Vitamin & Mineral Database - Comprehensive nutrition tracking
         function generateNutritionData(mealType, calories, cuisine, diet) {
@@ -2777,19 +2703,9 @@
                                         ${day.breakfast.calories} kcal
                                     </span>
                                 </div>
-                                <div class="meal-content-flex">
-                                    <div class="meal-image-container">
-                                        <img src="${getMealImagePlaceholder(day.breakfast.name, state.cuisine, 'breakfast')}" 
-                                             alt="${day.breakfast.name}" 
-                                             class="meal-image"
-                                             loading="lazy">
-                                    </div>
-                                    <div class="meal-text-content">
-                                        <div class="meal-description">${day.breakfast.name}</div>
-                                        <div class="meal-source">Source: ${day.breakfast.source}</div>
-                                        ${day.breakfast.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.breakfast.healthNotes}</div>` : ''}
-                                    </div>
-                                </div>
+                                <div class="meal-description">${day.breakfast.name}</div>
+                                <div class="meal-source">Source: ${day.breakfast.source}</div>
+                                ${day.breakfast.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.breakfast.healthNotes}</div>` : ''}
                                 ${day.breakfast.vitamins ? `
                                 <div class="nutrition-info">
                                     <strong>🍊 Key Nutrients</strong>
@@ -2835,19 +2751,9 @@
                                         ${day.lunch.calories} kcal
                                     </span>
                                 </div>
-                                <div class="meal-content-flex">
-                                    <div class="meal-image-container">
-                                        <img src="${getMealImagePlaceholder(day.lunch.name, state.cuisine, 'lunch')}" 
-                                             alt="${day.lunch.name}" 
-                                             class="meal-image"
-                                             loading="lazy">
-                                    </div>
-                                    <div class="meal-text-content">
-                                        <div class="meal-description">${day.lunch.name}</div>
-                                        <div class="meal-source">Source: ${day.lunch.source}</div>
-                                        ${day.lunch.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.lunch.healthNotes}</div>` : ''}
-                                    </div>
-                                </div>
+                                <div class="meal-description">${day.lunch.name}</div>
+                                <div class="meal-source">Source: ${day.lunch.source}</div>
+                                ${day.lunch.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.lunch.healthNotes}</div>` : ''}
                                 ${day.lunch.vitamins ? `
                                 <div class="nutrition-info">
                                     <strong>🍊 Key Nutrients</strong>
@@ -2873,19 +2779,9 @@
                                         ${day.dinner.calories} kcal
                                     </span>
                                 </div>
-                                <div class="meal-content-flex">
-                                    <div class="meal-image-container">
-                                        <img src="${getMealImagePlaceholder(day.dinner.name, state.cuisine, 'dinner')}" 
-                                             alt="${day.dinner.name}" 
-                                             class="meal-image"
-                                             loading="lazy">
-                                    </div>
-                                    <div class="meal-text-content">
-                                        <div class="meal-description">${day.dinner.name}</div>
-                                        <div class="meal-source">Source: ${day.dinner.source}</div>
-                                        ${day.dinner.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.dinner.healthNotes}</div>` : ''}
-                                    </div>
-                                </div>
+                                <div class="meal-description">${day.dinner.name}</div>
+                                <div class="meal-source">Source: ${day.dinner.source}</div>
+                                ${day.dinner.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.dinner.healthNotes}</div>` : ''}
                                 ${day.dinner.vitamins ? `
                                 <div class="nutrition-info">
                                     <strong>🍊 Key Nutrients</strong>
@@ -2911,19 +2807,9 @@
                                         ${day.snack.calories} kcal
                                     </span>
                                 </div>
-                                <div class="meal-content-flex">
-                                    <div class="meal-image-container">
-                                        <img src="${getMealImagePlaceholder(day.snack.name, state.cuisine, 'snack')}" 
-                                             alt="${day.snack.name}" 
-                                             class="meal-image"
-                                             loading="lazy">
-                                    </div>
-                                    <div class="meal-text-content">
-                                        <div class="meal-description">${day.snack.name}</div>
-                                        <div class="meal-source">Source: ${day.snack.source}</div>
-                                        ${day.snack.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.snack.healthNotes}</div>` : ''}
-                                    </div>
-                                </div>
+                                <div class="meal-description">${day.snack.name}</div>
+                                <div class="meal-source">Source: ${day.snack.source}</div>
+                                ${day.snack.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.snack.healthNotes}</div>` : ''}
                                 ${day.snack.vitamins ? `
                                 <div class="nutrition-info">
                                     <strong>🍊 Key Nutrients</strong>
