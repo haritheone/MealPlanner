@@ -339,6 +339,58 @@
             line-height: 1;
         }
         
+        /* Nutrition toggle functionality */
+        .nutrition-section {
+            margin-top: 12px;
+        }
+        
+        .nutrition-toggle-btn {
+            background: #f0fdf4;
+            border: 2px solid #bbf7d0;
+            color: #059669;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+            margin-top: 12px;
+        }
+        
+        .nutrition-toggle-btn:hover {
+            background: #dcfce7;
+            border-color: #86efac;
+        }
+        
+        .nutrition-toggle-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .toggle-icon {
+            font-size: 16px;
+            transition: transform 0.3s;
+        }
+        
+        .toggle-icon.rotated {
+            transform: rotate(180deg);
+        }
+        
+        .nutrition-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .nutrition-content.expanded {
+            max-height: 500px;
+            transition: max-height 0.4s ease-in;
+        }
+        
         @media (max-width: 768px) {
             .nutrition-grid {
                 grid-template-columns: repeat(3, 1fr);
@@ -1011,16 +1063,450 @@
             font-size: 13px;
             color: var(--text-secondary);
         }
-        @media (max-width: 768px) {
-            .container { padding: 32px 24px; }
-            .header h1 { font-size: 32px; }
-            .cuisine-grid { grid-template-columns: 1fr; }
-            .diet-grid { grid-template-columns: 1fr; }
-            .button-group { grid-template-columns: 1fr; }
-            .progress-step { width: 32px; height: 32px; font-size: 14px; }
-            .progress-line { width: 32px; }
-            .action-buttons { flex-direction: column; }
+        
+        /* ========================================
+           MOBILE-FIRST DESIGN FOR iPHONE 17
+           iPhone 17: 393×852 points (6.1")
+           iPhone 17 Pro Max: 430×932 points (6.7")
+           Safe areas, touch targets, gestures
+        ======================================== */
+        
+        /* Base styles optimized for mobile */
+        @media (max-width: 430px) {
+            /* Reset body for mobile */
+            body {
+                font-size: 16px; /* Prevents iOS zoom on input focus */
+                -webkit-text-size-adjust: 100%;
+                padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            }
+            
+            /* Container - mobile optimized */
+            .container {
+                padding: 16px 16px 24px 16px;
+                max-width: 100%;
+            }
+            
+            /* Header - compact for mobile */
+            .header {
+                padding: 20px 16px;
+                margin-bottom: 20px;
+                border-radius: 16px;
+            }
+            
+            .header-icon {
+                font-size: 48px;
+                margin-bottom: 12px;
+            }
+            
+            .header h1 {
+                font-size: 28px;
+                line-height: 1.2;
+                margin-bottom: 8px;
+            }
+            
+            .header p {
+                font-size: 14px;
+                line-height: 1.4;
+                margin-bottom: 12px;
+            }
+            
+            .ai-badge {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+            
+            .unique-badge {
+                display: block;
+                margin: 8px 0 0 0;
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+            
+            /* Progress bar - horizontal scroll on mobile */
+            .progress-bar {
+                display: flex;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: x mandatory;
+                gap: 0;
+                padding: 12px 0;
+                margin-bottom: 24px;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+            
+            .progress-bar::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .progress-step {
+                width: 40px;
+                height: 40px;
+                min-width: 40px;
+                font-size: 16px;
+                scroll-snap-align: center;
+            }
+            
+            .progress-line {
+                width: 40px;
+                min-width: 40px;
+                height: 4px;
+            }
+            
+            /* Section titles - mobile friendly */
+            .section-title {
+                font-size: 22px;
+                margin-bottom: 16px;
+                line-height: 1.3;
+            }
+            
+            .section-title-icon {
+                font-size: 24px;
+            }
+            
+            /* Cuisine grid - single column on small phones */
+            .cuisine-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .cuisine-card {
+                padding: 20px;
+                min-height: 100px;
+                /* Minimum touch target 44pt per Apple HIG */
+            }
+            
+            .cuisine-emoji {
+                font-size: 48px;
+                margin-bottom: 8px;
+            }
+            
+            .cuisine-name {
+                font-size: 18px;
+            }
+            
+            /* Diet grid - single column */
+            .diet-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .diet-card {
+                padding: 20px;
+                min-height: 80px;
+            }
+            
+            .diet-emoji {
+                font-size: 28px;
+            }
+            
+            .diet-name {
+                font-size: 18px;
+            }
+            
+            .diet-description {
+                font-size: 13px;
+            }
+            
+            /* Age group - single column */
+            .age-group-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .age-card {
+                padding: 18px;
+            }
+            
+            /* Health considerations - 2 columns on mobile */
+            .health-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            
+            .health-card {
+                padding: 14px 12px;
+            }
+            
+            .health-emoji {
+                font-size: 24px;
+                margin-bottom: 6px;
+            }
+            
+            .health-name {
+                font-size: 13px;
+            }
+            
+            /* Days selection - 2 columns */
+            .days-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            
+            .days-card {
+                padding: 18px;
+                min-height: 90px;
+            }
+            
+            .days-number {
+                font-size: 28px;
+            }
+            
+            .days-label {
+                font-size: 14px;
+            }
+            
+            /* Buttons - full width on mobile */
+            .button {
+                width: 100%;
+                padding: 16px 24px;
+                font-size: 16px;
+                min-height: 52px; /* Touch-friendly */
+                border-radius: 12px;
+            }
+            
+            .button-group {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .btn-secondary {
+                width: 100%;
+            }
+            
+            /* Action buttons - stack vertically */
+            .action-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .action-buttons .button {
+                width: 100%;
+            }
+            
+            /* Meal plan display - mobile optimized */
+            .day-card {
+                padding: 16px;
+                margin-bottom: 16px;
+                border-radius: 16px;
+            }
+            
+            .day-header {
+                font-size: 20px;
+                padding: 12px 0;
+                margin-bottom: 12px;
+            }
+            
+            .meal-item {
+                padding: 14px;
+                margin-bottom: 14px;
+                border-radius: 12px;
+            }
+            
+            .meal-label {
+                font-size: 14px;
+                margin-bottom: 8px;
+            }
+            
+            .meal-icon {
+                font-size: 18px;
+            }
+            
+            .meal-description {
+                font-size: 15px;
+                line-height: 1.4;
+                margin-left: 30px;
+                margin-bottom: 6px;
+            }
+            
+            .meal-source {
+                font-size: 11px;
+                margin-left: 30px;
+            }
+            
+            /* Nutrition grid - 3 columns on mobile */
+            .nutrition-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                margin-top: 12px;
+            }
+            
+            .nutrition-item {
+                padding: 10px 8px;
+                border-radius: 10px;
+            }
+            
+            .nutrition-icon {
+                font-size: 20px;
+                margin-bottom: 4px;
+            }
+            
+            .nutrition-name {
+                font-size: 10px;
+                margin-bottom: 2px;
+            }
+            
+            .nutrition-value {
+                font-size: 13px;
+            }
+            
+            .nutrition-percentage {
+                font-size: 9px;
+            }
+            
+            /* Swap button - mobile optimized */
+            .swap-btn {
+                width: 100%;
+                margin-top: 12px;
+                padding: 12px 16px;
+                font-size: 14px;
+                min-height: 44px;
+            }
+            
+            /* Modal - full screen on mobile */
+            .modal-content {
+                width: 95%;
+                max-width: 95%;
+                max-height: 85vh;
+                margin: 5vh auto;
+                border-radius: 20px;
+                padding: 20px;
+            }
+            
+            .modal-header {
+                font-size: 20px;
+                margin-bottom: 16px;
+            }
+            
+            .modal-close {
+                font-size: 32px;
+                width: 44px;
+                height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .meal-option {
+                padding: 14px;
+                margin: 10px 0;
+                border-radius: 12px;
+            }
+            
+            .meal-option-name {
+                font-size: 15px;
+                margin-bottom: 4px;
+            }
+            
+            .meal-option-info {
+                font-size: 12px;
+            }
+            
+            /* Shopping list - mobile friendly */
+            .ingredient-category {
+                margin-bottom: 20px;
+            }
+            
+            .category-title {
+                font-size: 18px;
+                padding: 10px 0;
+            }
+            
+            .ingredient-item {
+                padding: 10px 0;
+                font-size: 15px;
+            }
+            
+            /* Export buttons - stack on mobile */
+            .export-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .export-btn {
+                width: 100%;
+                min-height: 48px;
+            }
+            
+            /* Touch improvements */
+            * {
+                -webkit-tap-highlight-color: rgba(5, 150, 105, 0.1);
+            }
+            
+            button, .button, .cuisine-card, .diet-card, .age-card, .health-card, .days-card {
+                cursor: pointer;
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                user-select: none;
+            }
+            
+            /* Smooth scrolling */
+            html {
+                scroll-behavior: smooth;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            /* Input optimization */
+            input, select, textarea {
+                font-size: 16px; /* Prevents zoom */
+                border-radius: 10px;
+                padding: 14px;
+            }
         }
+        
+        /* iPhone 17 Pro Max specific (430px width) */
+        @media (min-width: 431px) and (max-width: 768px) {
+            /* Slightly larger layouts for Pro Max */
+            .cuisine-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .diet-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .health-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .nutrition-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        /* Landscape mode optimizations */
+        @media (max-width: 932px) and (orientation: landscape) {
+            .header {
+                padding: 12px 16px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .header-icon {
+                font-size: 36px;
+            }
+            
+            .cuisine-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .diet-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .health-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .modal-content {
+                max-height: 75vh;
+            }
+        }
+        
         .unique-badge {
             display: inline-block; background: #fef3c7; color: #92400e;
             padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-left: 8px;
@@ -1036,19 +1522,8 @@
             <div class="ai-badge"><span>✨</span><span>Professional Health Data</span></div>
         </div>
 
-        <div class="progress-bar">
-            <div class="progress-step active" id="step1">1</div>
-            <div class="progress-line" id="line1"></div>
-            <div class="progress-step" id="step2">2</div>
-            <div class="progress-line" id="line2"></div>
-            <div class="progress-step" id="step3">3</div>
-            <div class="progress-line" id="line3"></div>
-            <div class="progress-step" id="step4">4</div>
-            <div class="progress-line" id="line4"></div>
-            <div class="progress-step" id="step5">5</div>
-            <div class="progress-line" id="line5"></div>
-            <div class="progress-step" id="step6">6</div>
-        </div>
+        <!-- Progress bar removed for cleaner mobile experience -->
+
 
         <!-- Step 1: Choose Cuisine -->
         <div class="section active" id="section1">
@@ -2111,16 +2586,22 @@
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById('section' + step).classList.add('active');
             
+            // Progress bar was removed, so skip updating progress elements
+            // Keep this function for backward compatibility with section navigation
             for (let i = 1; i <= 6; i++) {
                 const stepEl = document.getElementById('step' + i);
-                stepEl.classList.remove('active', 'completed');
-                if (i < step) stepEl.classList.add('completed');
-                else if (i === step) stepEl.classList.add('active');
+                if (stepEl) {
+                    stepEl.classList.remove('active', 'completed');
+                    if (i < step) stepEl.classList.add('completed');
+                    else if (i === step) stepEl.classList.add('active');
+                }
                 
                 if (i < 6) {
                     const lineEl = document.getElementById('line' + i);
-                    if (i < step) lineEl.classList.add('active');
-                    else lineEl.classList.remove('active');
+                    if (lineEl) {
+                        if (i < step) lineEl.classList.add('active');
+                        else lineEl.classList.remove('active');
+                    }
                 }
             }
         }
@@ -2725,38 +3206,43 @@
                                 <div class="meal-source">Source: ${day.breakfast.source}</div>
                                 ${day.breakfast.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.breakfast.healthNotes}</div>` : ''}
                                 ${day.breakfast.vitamins ? `
-                                <div class="nutrition-info">
-                                    <strong>🍊 Key Nutrients</strong>
-                                    <div class="nutrition-grid">
-                                        <div class="nutrition-item">
-                                            <div class="nutrition-label">Protein</div>
-                                            <div class="nutrition-value">${day.breakfast.protein}g</div>
+                                <div class="nutrition-section">
+                                    <button class="nutrition-toggle-btn" onclick="toggleNutrition(this)">
+                                        <span>🍊 View Nutrients (${day.breakfast.protein}g protein)</span>
+                                        <span class="toggle-icon">▼</span>
+                                    </button>
+                                    <div class="nutrition-content">
+                                        <div class="nutrition-grid">
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">Protein</div>
+                                                <div class="nutrition-value">${day.breakfast.protein}g</div>
+                                            </div>
+                                            ${day.breakfast.vitamins.C ? `
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">Vit C</div>
+                                                <div class="nutrition-value">${day.breakfast.vitamins.C.dv}%</div>
+                                            </div>` : ''}
+                                            ${day.breakfast.vitamins.B12 ? `
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">B12</div>
+                                                <div class="nutrition-value">${day.breakfast.vitamins.B12.dv}%</div>
+                                            </div>` : ''}
+                                            ${day.breakfast.minerals.Iron ? `
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">Iron</div>
+                                                <div class="nutrition-value">${day.breakfast.minerals.Iron.dv}%</div>
+                                            </div>` : ''}
+                                            ${day.breakfast.minerals.Calcium ? `
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">Calcium</div>
+                                                <div class="nutrition-value">${day.breakfast.minerals.Calcium.dv}%</div>
+                                            </div>` : ''}
+                                            ${day.breakfast.vitamins.A ? `
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">Vit A</div>
+                                                <div class="nutrition-value">${day.breakfast.vitamins.A.dv}%</div>
+                                            </div>` : ''}
                                         </div>
-                                        ${day.breakfast.vitamins.C ? `
-                                        <div class="nutrition-item">
-                                            <div class="nutrition-label">Vit C</div>
-                                            <div class="nutrition-value">${day.breakfast.vitamins.C.dv}%</div>
-                                        </div>` : ''}
-                                        ${day.breakfast.vitamins.B12 ? `
-                                        <div class="nutrition-item">
-                                            <div class="nutrition-label">B12</div>
-                                            <div class="nutrition-value">${day.breakfast.vitamins.B12.dv}%</div>
-                                        </div>` : ''}
-                                        ${day.breakfast.minerals.Iron ? `
-                                        <div class="nutrition-item">
-                                            <div class="nutrition-label">Iron</div>
-                                            <div class="nutrition-value">${day.breakfast.minerals.Iron.dv}%</div>
-                                        </div>` : ''}
-                                        ${day.breakfast.minerals.Calcium ? `
-                                        <div class="nutrition-item">
-                                            <div class="nutrition-label">Calcium</div>
-                                            <div class="nutrition-value">${day.breakfast.minerals.Calcium.dv}%</div>
-                                        </div>` : ''}
-                                        ${day.breakfast.vitamins.A ? `
-                                        <div class="nutrition-item">
-                                            <div class="nutrition-label">Vit A</div>
-                                            <div class="nutrition-value">${day.breakfast.vitamins.A.dv}%</div>
-                                        </div>` : ''}
                                     </div>
                                 </div>
                                 ` : ''}
@@ -2773,18 +3259,23 @@
                                 <div class="meal-source">Source: ${day.lunch.source}</div>
                                 ${day.lunch.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.lunch.healthNotes}</div>` : ''}
                                 ${day.lunch.vitamins ? `
-                                <div class="nutrition-info">
-                                    <strong>🍊 Key Nutrients</strong>
-                                    <div class="nutrition-grid">
-                                        <div class="nutrition-item">
-                                            <div class="nutrition-label">Protein</div>
-                                            <div class="nutrition-value">${day.lunch.protein}g</div>
+                                <div class="nutrition-section">
+                                    <button class="nutrition-toggle-btn" onclick="toggleNutrition(this)">
+                                        <span>🍊 View Nutrients (${day.lunch.protein}g protein)</span>
+                                        <span class="toggle-icon">▼</span>
+                                    </button>
+                                    <div class="nutrition-content">
+                                        <div class="nutrition-grid">
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">Protein</div>
+                                                <div class="nutrition-value">${day.lunch.protein}g</div>
+                                            </div>
+                                            ${day.lunch.vitamins.C ? `<div class="nutrition-item"><div class="nutrition-label">Vit C</div><div class="nutrition-value">${day.lunch.vitamins.C.dv}%</div></div>` : ''}
+                                            ${day.lunch.vitamins.B12 ? `<div class="nutrition-item"><div class="nutrition-label">B12</div><div class="nutrition-value">${day.lunch.vitamins.B12.dv}%</div></div>` : ''}
+                                            ${day.lunch.minerals.Iron ? `<div class="nutrition-item"><div class="nutrition-label">Iron</div><div class="nutrition-value">${day.lunch.minerals.Iron.dv}%</div></div>` : ''}
+                                            ${day.lunch.minerals.Calcium ? `<div class="nutrition-item"><div class="nutrition-label">Calcium</div><div class="nutrition-value">${day.lunch.minerals.Calcium.dv}%</div></div>` : ''}
+                                            ${day.lunch.vitamins.A ? `<div class="nutrition-item"><div class="nutrition-label">Vit A</div><div class="nutrition-value">${day.lunch.vitamins.A.dv}%</div></div>` : ''}
                                         </div>
-                                        ${day.lunch.vitamins.C ? `<div class="nutrition-item"><div class="nutrition-label">Vit C</div><div class="nutrition-value">${day.lunch.vitamins.C.dv}%</div></div>` : ''}
-                                        ${day.lunch.vitamins.B12 ? `<div class="nutrition-item"><div class="nutrition-label">B12</div><div class="nutrition-value">${day.lunch.vitamins.B12.dv}%</div></div>` : ''}
-                                        ${day.lunch.minerals.Iron ? `<div class="nutrition-item"><div class="nutrition-label">Iron</div><div class="nutrition-value">${day.lunch.minerals.Iron.dv}%</div></div>` : ''}
-                                        ${day.lunch.minerals.Calcium ? `<div class="nutrition-item"><div class="nutrition-label">Calcium</div><div class="nutrition-value">${day.lunch.minerals.Calcium.dv}%</div></div>` : ''}
-                                        ${day.lunch.vitamins.A ? `<div class="nutrition-item"><div class="nutrition-label">Vit A</div><div class="nutrition-value">${day.lunch.vitamins.A.dv}%</div></div>` : ''}
                                     </div>
                                 </div>
                                 ` : ''}
@@ -2801,18 +3292,23 @@
                                 <div class="meal-source">Source: ${day.dinner.source}</div>
                                 ${day.dinner.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.dinner.healthNotes}</div>` : ''}
                                 ${day.dinner.vitamins ? `
-                                <div class="nutrition-info">
-                                    <strong>🍊 Key Nutrients</strong>
-                                    <div class="nutrition-grid">
-                                        <div class="nutrition-item">
-                                            <div class="nutrition-label">Protein</div>
-                                            <div class="nutrition-value">${day.dinner.protein}g</div>
+                                <div class="nutrition-section">
+                                    <button class="nutrition-toggle-btn" onclick="toggleNutrition(this)">
+                                        <span>🍊 View Nutrients (${day.dinner.protein}g protein)</span>
+                                        <span class="toggle-icon">▼</span>
+                                    </button>
+                                    <div class="nutrition-content">
+                                        <div class="nutrition-grid">
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">Protein</div>
+                                                <div class="nutrition-value">${day.dinner.protein}g</div>
+                                            </div>
+                                            ${day.dinner.vitamins.C ? `<div class="nutrition-item"><div class="nutrition-label">Vit C</div><div class="nutrition-value">${day.dinner.vitamins.C.dv}%</div></div>` : ''}
+                                            ${day.dinner.vitamins.B12 ? `<div class="nutrition-item"><div class="nutrition-label">B12</div><div class="nutrition-value">${day.dinner.vitamins.B12.dv}%</div></div>` : ''}
+                                            ${day.dinner.minerals.Iron ? `<div class="nutrition-item"><div class="nutrition-label">Iron</div><div class="nutrition-value">${day.dinner.minerals.Iron.dv}%</div></div>` : ''}
+                                            ${day.dinner.minerals.Calcium ? `<div class="nutrition-item"><div class="nutrition-label">Calcium</div><div class="nutrition-value">${day.dinner.minerals.Calcium.dv}%</div></div>` : ''}
+                                            ${day.dinner.vitamins.A ? `<div class="nutrition-item"><div class="nutrition-label">Vit A</div><div class="nutrition-value">${day.dinner.vitamins.A.dv}%</div></div>` : ''}
                                         </div>
-                                        ${day.dinner.vitamins.C ? `<div class="nutrition-item"><div class="nutrition-label">Vit C</div><div class="nutrition-value">${day.dinner.vitamins.C.dv}%</div></div>` : ''}
-                                        ${day.dinner.vitamins.B12 ? `<div class="nutrition-item"><div class="nutrition-label">B12</div><div class="nutrition-value">${day.dinner.vitamins.B12.dv}%</div></div>` : ''}
-                                        ${day.dinner.minerals.Iron ? `<div class="nutrition-item"><div class="nutrition-label">Iron</div><div class="nutrition-value">${day.dinner.minerals.Iron.dv}%</div></div>` : ''}
-                                        ${day.dinner.minerals.Calcium ? `<div class="nutrition-item"><div class="nutrition-label">Calcium</div><div class="nutrition-value">${day.dinner.minerals.Calcium.dv}%</div></div>` : ''}
-                                        ${day.dinner.vitamins.A ? `<div class="nutrition-item"><div class="nutrition-label">Vit A</div><div class="nutrition-value">${day.dinner.vitamins.A.dv}%</div></div>` : ''}
                                     </div>
                                 </div>
                                 ` : ''}
@@ -2829,18 +3325,23 @@
                                 <div class="meal-source">Source: ${day.snack.source}</div>
                                 ${day.snack.healthNotes ? `<div class="health-notes" style="font-size: 12px; color: #059669; margin-top: 8px; background: #d1fae5; padding: 8px; border-radius: 6px;">${day.snack.healthNotes}</div>` : ''}
                                 ${day.snack.vitamins ? `
-                                <div class="nutrition-info">
-                                    <strong>🍊 Key Nutrients</strong>
-                                    <div class="nutrition-grid">
-                                        <div class="nutrition-item">
-                                            <div class="nutrition-label">Protein</div>
-                                            <div class="nutrition-value">${day.snack.protein}g</div>
+                                <div class="nutrition-section">
+                                    <button class="nutrition-toggle-btn" onclick="toggleNutrition(this)">
+                                        <span>🍊 View Nutrients (${day.snack.protein}g protein)</span>
+                                        <span class="toggle-icon">▼</span>
+                                    </button>
+                                    <div class="nutrition-content">
+                                        <div class="nutrition-grid">
+                                            <div class="nutrition-item">
+                                                <div class="nutrition-label">Protein</div>
+                                                <div class="nutrition-value">${day.snack.protein}g</div>
+                                            </div>
+                                            ${day.snack.vitamins.C ? `<div class="nutrition-item"><div class="nutrition-label">Vit C</div><div class="nutrition-value">${day.snack.vitamins.C.dv}%</div></div>` : ''}
+                                            ${day.snack.vitamins.B12 ? `<div class="nutrition-item"><div class="nutrition-label">B12</div><div class="nutrition-value">${day.snack.vitamins.B12.dv}%</div></div>` : ''}
+                                            ${day.snack.minerals.Iron ? `<div class="nutrition-item"><div class="nutrition-label">Iron</div><div class="nutrition-value">${day.snack.minerals.Iron.dv}%</div></div>` : ''}
+                                            ${day.snack.minerals.Calcium ? `<div class="nutrition-item"><div class="nutrition-label">Calcium</div><div class="nutrition-value">${day.snack.minerals.Calcium.dv}%</div></div>` : ''}
+                                            ${day.snack.vitamins.A ? `<div class="nutrition-item"><div class="nutrition-label">Vit A</div><div class="nutrition-value">${day.snack.vitamins.A.dv}%</div></div>` : ''}
                                         </div>
-                                        ${day.snack.vitamins.C ? `<div class="nutrition-item"><div class="nutrition-label">Vit C</div><div class="nutrition-value">${day.snack.vitamins.C.dv}%</div></div>` : ''}
-                                        ${day.snack.vitamins.B12 ? `<div class="nutrition-item"><div class="nutrition-label">B12</div><div class="nutrition-value">${day.snack.vitamins.B12.dv}%</div></div>` : ''}
-                                        ${day.snack.minerals.Iron ? `<div class="nutrition-item"><div class="nutrition-label">Iron</div><div class="nutrition-value">${day.snack.minerals.Iron.dv}%</div></div>` : ''}
-                                        ${day.snack.minerals.Calcium ? `<div class="nutrition-item"><div class="nutrition-label">Calcium</div><div class="nutrition-value">${day.snack.minerals.Calcium.dv}%</div></div>` : ''}
-                                        ${day.snack.vitamins.A ? `<div class="nutrition-item"><div class="nutrition-label">Vit A</div><div class="nutrition-value">${day.snack.vitamins.A.dv}%</div></div>` : ''}
                                     </div>
                                 </div>
                                 ` : ''}
@@ -3180,6 +3681,22 @@
             }
             
             closeSwapModal();
+        }
+        
+        // Toggle nutrition details
+        function toggleNutrition(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('.toggle-icon');
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                icon.classList.remove('rotated');
+                button.querySelector('span').textContent = button.querySelector('span').textContent.replace('Hide', 'View');
+            } else {
+                content.classList.add('expanded');
+                icon.classList.add('rotated');
+                button.querySelector('span').textContent = button.querySelector('span').textContent.replace('View', 'Hide');
+            }
         }
         
         // Close modal when clicking outside
