@@ -1500,13 +1500,6 @@
         // Alternative: Generate a colored gradient placeholder with emoji
         function getMealImagePlaceholder(mealName, cuisine, mealType) {
             try {
-                const mealEmojis = {
-                    breakfast: '🌅',
-                    lunch: '🍽️',
-                    dinner: '🌙',
-                    snack: '🥤'
-                };
-                
                 const cuisineColors = {
                     indian: ['#FF6B35', '#F7931E'],
                     mexican: ['#C1666B', '#D4A5A5'],
@@ -1515,29 +1508,30 @@
                 };
                 
                 const colors = cuisineColors[cuisine] || ['#059669', '#10b981'];
-                const emoji = mealEmojis[mealType] || '🍴';
-                const safeMealName = (mealName || 'Meal').substring(0, 25);
+                const safeMealName = (mealName || 'Meal').substring(0, 25).replace(/[<>&'"]/g, ''); // Remove problematic characters
                 
-                // Create SVG data URL with gradient and emoji
-                const svg = `
-                    <svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="grad-${Date.now()}" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:${colors[0]};stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:${colors[1]};stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <rect width="300" height="300" fill="url(#grad-${Date.now()})"/>
-                        <text x="50%" y="50%" font-size="120" text-anchor="middle" dy=".35em">${emoji}</text>
-                        <text x="50%" y="75%" font-size="16" text-anchor="middle" fill="white" font-weight="bold" opacity="0.9">${safeMealName}</text>
-                    </svg>
-                `;
+                // Use unique ID for gradient
+                const gradId = 'grad' + Math.random().toString(36).substr(2, 9);
                 
-                return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+                // Create SVG WITHOUT emojis in text (emojis cause encoding issues)
+                const svg = `<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:${colors[0]};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${colors[1]};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="300" height="300" fill="url(#${gradId})"/>
+                    <text x="50%" y="65%" font-size="18" text-anchor="middle" fill="white" font-weight="bold" opacity="0.9">${safeMealName}</text>
+                </svg>`;
+                
+                // Use URI encoding instead of base64 to avoid emoji issues
+                return 'data:image/svg+xml,' + encodeURIComponent(svg);
             } catch (error) {
                 console.error('Error generating meal image:', error);
-                // Return a simple fallback image
-                return 'data:image/svg+xml;base64,' + btoa('<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="300" fill="#059669"/><text x="50%" y="50%" font-size="120" text-anchor="middle" dy=".35em">🍴</text></svg>');
+                // Return a simple fallback without emojis
+                const fallbackSvg = '<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="300" fill="#059669"/><circle cx="150" cy="150" r="60" fill="white" opacity="0.3"/></svg>';
+                return 'data:image/svg+xml,' + encodeURIComponent(fallbackSvg);
             }
         }
         
